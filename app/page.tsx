@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from "react"
 import { useScrollReveal } from "@/hooks/use-scroll-reveal"
 
 import SplashIntro from "@/components/splash-intro"
-import Navbar from "@/components/navbar"
 import AnnouncementTicker from "@/components/announcement-ticker"
 import Hero from "@/components/hero"
 import About from "@/components/about"
@@ -16,37 +15,55 @@ import Library from "@/components/library"
 import Gallery from "@/components/gallery"
 import Announcements from "@/components/announcements"
 import Footer from "@/components/footer"
-import SearchOverlay from "@/components/search-overlay"
 import CookieBanner from "@/components/cookie-banner"
 import BackToTop from "@/components/back-to-top"
 
+const SPLASH_STORAGE_KEY = "poltekimipas:splash-seen"
+
 export default function Home() {
-  const [searchOpen, setSearchOpen] = useState(false)
   const [splashDone, setSplashDone] = useState(false)
+  const [isSplashChecked, setIsSplashChecked] = useState(false)
   useScrollReveal()
+  const showSplash = isSplashChecked && !splashDone
+
+  // Show splash only on the first app open; skip it on subsequent visits.
+  useEffect(() => {
+    try {
+      const hasSeenSplash = window.localStorage.getItem(SPLASH_STORAGE_KEY) === "1"
+      setSplashDone(hasSeenSplash)
+    } catch {
+      setSplashDone(false)
+    } finally {
+      setIsSplashChecked(true)
+    }
+  }, [])
 
   // Lock scroll while splash is active
   useEffect(() => {
-    if (!splashDone) {
+    if (showSplash) {
       document.body.classList.add("splash-active")
     } else {
       document.body.classList.remove("splash-active")
     }
     return () => document.body.classList.remove("splash-active")
-  }, [splashDone])
+  }, [showSplash])
 
   const handleSplashComplete = useCallback(() => {
+    try {
+      window.localStorage.setItem(SPLASH_STORAGE_KEY, "1")
+    } catch {
+      // no-op: if storage is blocked, fallback remains first-visit behavior
+    }
     setSplashDone(true)
   }, [])
 
   return (
     <>
-      {!splashDone && <SplashIntro onComplete={handleSplashComplete} />}
+      {showSplash && <SplashIntro onComplete={handleSplashComplete} />}
       <main
         className="transition-opacity duration-700"
-        style={{ opacity: splashDone ? 1 : 0 }}
+        style={{ opacity: showSplash ? 0 : 1 }}
       >
-        <Navbar onSearchOpen={() => setSearchOpen(true)} />
         <AnnouncementTicker />
         <Hero />
         <About />
@@ -58,7 +75,6 @@ export default function Home() {
         <Gallery />
         <Announcements />
         <Footer />
-        <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
         <CookieBanner />
         <BackToTop />
       </main>

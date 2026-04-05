@@ -1,9 +1,10 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { Clock, User, ArrowLeft, Calendar, ArrowRight, Search, Filter, ChevronDown, Eye, Tag } from "lucide-react"
+import { Clock, User, ArrowLeft, Calendar, ArrowRight, Search, Filter, Eye, Sparkles } from "lucide-react"
 import Link from "next/link"
-import { notFound } from "next/navigation"
+
+import { SiteFilterCombobox } from "@/components/site-filter-combobox"
 
 const posts = [
   {
@@ -267,12 +268,6 @@ export default function BlogPage() {
   const [selectedCategory, setSelectedCategory] = useState("Semua")
   const [currentPage, setCurrentPage] = useState(1)
 
-  // Get all unique tags
-  const allTags = useMemo(() => {
-    const tags = new Set(posts.flatMap(post => post.tags))
-    return Array.from(tags).sort()
-  }, [])
-
   // Get all unique categories
   const allCategories = useMemo(() => {
     const categories = new Set(posts.map(post => post.category))
@@ -344,200 +339,6 @@ export default function BlogPage() {
         .blog-hero-content {
           position: relative;
           z-index: 1;
-        }
-
-        /* Search and filter */
-        .search-filter-container {
-          background: white;
-          border-radius: 12px;
-          padding: 24px;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-          border: 1px solid #e5e7eb;
-          margin-bottom: 32px;
-        }
-
-        .search-input {
-          width: 100%;
-          padding: 14px 16px 14px 48px;
-          border: 2px solid #e5e7eb;
-          border-radius: 12px;
-          font-size: 15px;
-          transition: all 0.3s ease;
-          background: #f8fafc;
-        }
-
-        .search-input:focus {
-          outline: none;
-          border-color: #1B3A6B;
-          box-shadow: 0 0 0 4px rgba(27, 58, 107, 0.1);
-          background: white;
-        }
-
-        .search-input::placeholder {
-          color: #9ca3af;
-        }
-
-        .search-icon {
-          position: absolute;
-          left: 16px;
-          top: 50%;
-          transform: translateY(-50%);
-          color: #6b7280;
-          pointer-events: none;
-          z-index: 1;
-        }
-
-        /* Category filters */
-        .category-filters {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 8px;
-        }
-
-        .category-btn {
-          padding: 8px 16px;
-          border: 2px solid #e5e7eb;
-          border-radius: 20px;
-          background: white;
-          color: #6b7280;
-          font-size: 14px;
-          font-weight: 500;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
-
-        .category-btn:hover {
-          border-color: #1B3A6B;
-          color: #1B3A6B;
-        }
-
-        .category-btn.active {
-          background: #1B3A6B;
-          color: white;
-          border-color: #1B3A6B;
-        }
-
-        /* Article cards */
-        .article-card {
-          background: white;
-          border-radius: 12px;
-          overflow: hidden;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-          border: 1px solid #e5e7eb;
-          transition: all 0.3s ease;
-        }
-
-        .article-card:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-          border-color: #C9A84C;
-        }
-
-        .article-image {
-          width: 100%;
-          height: 200px;
-          object-fit: cover;
-          transition: transform 0.3s ease;
-        }
-
-        .article-image-placeholder {
-          width: 100%;
-          height: 200px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 48px;
-          font-weight: bold;
-          color: white;
-          font-family: 'Plus Jakarta Sans', sans-serif;
-          background: linear-gradient(135deg, #1B3A6B 0%, #2C4F7C 100%);
-        }
-
-        .article-card:hover .article-image {
-          transform: scale(1.05);
-        }
-
-        .article-overlay {
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 100%);
-          opacity: 0;
-          transition: opacity 0.3s ease;
-        }
-
-        .article-card:hover .article-overlay {
-          opacity: 1;
-        }
-
-        .category-badge {
-          position: absolute;
-          left: 12px;
-          top: 12px;
-          background: #C9A84C;
-          color: #1B3A6B;
-          padding: 4px 12px;
-          border-radius: 20px;
-          font-size: 11px;
-          font-weight: 600;
-          display: inline-flex;
-          align-items: center;
-          gap: 4px;
-        }
-
-        /* Article meta */
-        .article-meta {
-          display: flex;
-          align-items: center;
-          gap: 16px;
-          color: #6b7280;
-          font-size: 12px;
-          margin-bottom: 8px;
-        }
-
-        .article-meta-item {
-          display: flex;
-          align-items: center;
-          gap: 4px;
-        }
-
-        /* Tags */
-        .article-tags {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 6px;
-          margin-top: 12px;
-        }
-
-        .tag {
-          background: rgba(27, 58, 107, 0.1);
-          color: #1B3A6B;
-          padding: 4px 10px;
-          border-radius: 12px;
-          font-size: 11px;
-          font-weight: 500;
-          transition: all 0.3s ease;
-        }
-
-        .tag:hover {
-          background: #1B3A6B;
-          color: white;
-        }
-
-        /* Read more link */
-        .read-more {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          color: #1B3A6B;
-          font-weight: 600;
-          font-size: 14px;
-          text-decoration: none;
-          transition: all 0.3s ease;
-        }
-
-        .read-more:hover {
-          color: #C9A84C;
-          transform: translateX(4px);
         }
 
         /* Back button */
@@ -636,20 +437,10 @@ export default function BlogPage() {
           font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-          .search-filter-container {
-            padding: 16px;
-          }
-          
-          .category-filters {
-            justify-content: center;
-          }
-        }
       `}</style>
       <div className="blog-root">
         {/* Hero Section */}
-        <section className="blog-hero py-20">
+        <section className="blog-hero pb-24 pt-16 md:pb-28 md:pt-20">
           <div className="blog-hero-content max-w-7xl mx-auto px-4">
             <Link href="/" className="back-button">
               <ArrowLeft className="h-4 w-4" />
@@ -670,58 +461,57 @@ export default function BlogPage() {
           </div>
         </section>
 
-        {/* Search and Filter Section */}
-        <section className="py-12 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="search-filter-container">
-              {/* Search Section */}
-              <div className="mb-6">
-                <div className="flex items-center gap-2 mb-3">
-                  <Search className="h-4 w-4 text-navy" />
-                  <span className="text-sm font-medium text-navy">Cari Blog:</span>
+        {/* Search & kategori — tema sama dengan berita */}
+        <section className="bg-[#f4f6fa] pb-10 pt-0">
+          <div className="relative z-10 mx-auto -mt-10 max-w-7xl px-4">
+            <div className="relative overflow-hidden rounded-2xl border border-[#d6dde6]/80 bg-white p-4 shadow-[0_12px_40px_-12px_rgba(15,38,71,0.12)] ring-1 ring-[#f0dca6]/45 md:p-7">
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#c9a84c]/80 via-[#f0d78c]/70 to-[#c9a84c]/80" />
+              <div className="mt-2 grid gap-5 lg:grid-cols-[1fr_minmax(200px,280px)] lg:items-end lg:gap-8">
+                <div>
+                  <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-[#1b3a6b]">
+                    <Search className="h-4 w-4 text-[#c9a84c]" />
+                    Cari blog
+                  </div>
+                  <div className="relative">
+                    <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#5a6b7f]/70" />
+                    <input
+                      type="text"
+                      placeholder="Judul, penulis, atau ringkasan..."
+                      className="h-11 w-full rounded-xl border border-[#d6dde6] bg-[#fafbfd] pl-10 pr-3 text-sm text-[#1b2a4a] outline-none transition-colors placeholder:text-[#5a6b7f]/70 focus:border-[#1b3a6b] focus:bg-white focus:ring-2 focus:ring-[#1b3a6b]/15"
+                      value={searchQuery}
+                      onChange={(e) => handleFilterChange(setSearchQuery)(e.target.value)}
+                      aria-label="Cari artikel blog"
+                    />
+                  </div>
                 </div>
-                <div className="relative">
-                  <Search className="search-icon h-5 w-5" />
-                  <input
-                    type="text"
-                    placeholder="Cari artikel berdasarkan judul, penulis, atau konten..."
-                    className="search-input"
-                    value={searchQuery}
-                    onChange={(e) => handleFilterChange(setSearchQuery)(e.target.value)}
+                <div className="w-full">
+                  <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-[#1b3a6b]">
+                    <Filter className="h-4 w-4 text-[#c9a84c]" />
+                    Kategori
+                  </div>
+                  <SiteFilterCombobox
+                    options={allCategories}
+                    value={selectedCategory}
+                    onChange={(v) => handleFilterChange(setSelectedCategory)(v)}
+                    searchPlaceholder="Cari kategori..."
+                    emptyText="Tidak ada kategori yang cocok."
+                    ariaLabel="Pilih kategori blog"
                   />
                 </div>
               </div>
-
-              {/* Tag Filter Section */}
-              <div className="border-t pt-6" style={{ borderColor: "#e5e7eb" }}>
-                <div className="flex items-center gap-2 mb-3">
-                  <Filter className="h-4 w-4 text-navy" />
-                  <span className="text-sm font-medium text-navy">Filter Kategori:</span>
-                </div>
-                <div className="category-filters">
-                  {allCategories.map((category) => (
-                    <button
-                      key={category}
-                      className={`category-btn ${selectedCategory === category ? 'active' : ''}`}
-                      onClick={() => handleFilterChange(setSelectedCategory)(category)}
-                    >
-                      {category}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Results Count */}
-              <div className="text-sm text-muted-foreground mt-4">
-                Menampilkan {currentPosts.length} dari {filteredAndSortedPosts.length} artikel
-                {searchQuery && ` untuk "${searchQuery}"`}
-                {selectedCategory !== "Semua" && ` di kategori "${selectedCategory}"`}
+              <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-[#eef1f6] pt-4">
+                <Sparkles className="h-3.5 w-3.5 text-[#c9a84c]" />
+                <p className="text-xs text-[#5a6b7f] md:text-sm">
+                  Menampilkan {currentPosts.length} dari {filteredAndSortedPosts.length} artikel
+                  {searchQuery ? ` · "${searchQuery}"` : ""}
+                  {selectedCategory !== "Semua" ? ` · ${selectedCategory}` : ""}
+                </p>
               </div>
             </div>
           </div>
         </section>
         {/* Articles Grid */}
-        <section className="py-12">
+        <section className="bg-[#f4f6fa] py-10">
           <div className="max-w-7xl mx-auto px-4">
             {currentPosts.length > 0 ? (
               <div className="grid gap-8 md:grid-cols-2">

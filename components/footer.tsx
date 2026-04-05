@@ -1,10 +1,12 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { MapPin, Phone, Mail, Instagram, Facebook, Youtube, Twitter } from "lucide-react"
 
 const sitemapLinks = [
   { label: "Beranda", href: "#beranda" },
   { label: "Tentang", href: "#tentang" },
+  { label: "Profil", href: "/profile" },
   { label: "Program Studi", href: "#program-studi" },
   { label: "Berita", href: "#berita" },
   { label: "Blog", href: "#blog" },
@@ -22,6 +24,12 @@ const socialLinks = [
 ]
 
 export default function Footer() {
+  const [year, setYear] = useState<number | null>(null)
+
+  useEffect(() => {
+    setYear(new Date().getFullYear())
+  }, [])
+
   return (
     <>
       <style>{`
@@ -419,7 +427,7 @@ export default function Footer() {
 
         <div className="footer-bottom">
           <span className="footer-bottom-text">
-            &copy; {new Date().getFullYear()} Politeknik Imigrasi Pemasyarakatan. Hak Cipta Dilindungi.
+            &copy; {year ?? ""} Politeknik Imigrasi Pemasyarakatan. Hak Cipta Dilindungi.
           </span>
           <div className="footer-bottom-right">
             <span className="footer-bottom-text">Kementerian Imigrasi dan Pemasyarakatan</span>

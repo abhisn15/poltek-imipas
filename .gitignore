@@ -5,7 +5,12 @@ __v0_jsx-dev-runtime.ts
 
 # Common ignores
 node_modules/
+.deps-ckeditor/
 .next/
+.next-cache/
 .env*.local
+.env
 .DS_Store
 .vercel
+prisma/generated/
+tsconfig.tsbuildinfo

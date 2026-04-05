@@ -313,3 +313,40 @@ Proyek ini siap untuk deployment produksi dan dapat dikembangkan lebih lanjut se
 *Dibuat: Maret 2026*
 *Proyek: POLTEKIMIPAS Frontend*
 *Framework: Next.js 16.1.6*
+
+---
+
+## Admin + MySQL (Update April 2026)
+
+### Konfigurasi Lokal
+1. Salin `.env.example` menjadi `.env` (Prisma membaca dari `.env`).
+2. Pastikan MySQL lokal aktif dengan user `root` dan password kosong (`DB_PASSWORD=`).
+3. Generate Prisma client: `npm run prisma:generate`.
+4. Sinkronkan skema ke database: `npm run prisma:dbpush`.
+5. Seed user statis superadmin: `npm run prisma:seed`.
+6. Jalankan aplikasi dengan `npm run dev`.
+
+> Skema database akan dibuat otomatis saat API pertama dipanggil.  
+> Jika perlu setup manual, gunakan file `database/skema_poltekimipas.sql`.
+
+### Akun Superadmin Awal
+- Username: `superadmin`
+- Password: `superadmin123`
+- Durasi sesi login: `30 hari` (1 bulan)
+
+### Endpoint Utama
+- `POST /api/admin/masuk`
+- `POST /api/admin/keluar`
+- `GET /api/admin/sesi`
+- `GET/POST /api/admin/berita`
+- `DELETE /api/admin/berita/:id`
+- `GET/POST /api/admin/kategori-berita`
+- `GET /api/admin/berita/gambar`
+- `GET /api/publik/berita`
+- `GET /api/publik/berita-penting`
+
+### Folder Gambar Berita
+- Gunakan folder khusus: `/public/images/berita`
+- Form admin berita fokus upload file gambar dari perangkat (otomatis masuk ke folder asset ini).
+- Text editor berita memakai CKEditor WYSIWYG (toolbar lengkap) dan mendukung paste/upload gambar ke endpoint admin.
+- Jika dependency CKEditor belum ada, jalankan: `npm run ckeditor:install`.

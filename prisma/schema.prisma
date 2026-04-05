@@ -1,0 +1,90 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/client_next"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum PeranAdmin {
+  superadmin
+  admin
+}
+
+enum StatusPublikasi {
+  draft
+  terbit
+}
+
+model AkunAdmin {
+  idAdmin       Int         @id @default(autoincrement()) @map("id_admin") @db.UnsignedInt
+  namaPengguna  String      @unique @map("nama_pengguna") @db.VarChar(80)
+  namaLengkap   String      @map("nama_lengkap") @db.VarChar(140)
+  kataSandiHash String      @map("kata_sandi_hash") @db.Char(64)
+  peran         PeranAdmin  @default(superadmin)
+  aktif         Boolean     @default(true)
+  dibuatPada    DateTime    @default(now()) @map("dibuat_pada") @db.Timestamp(0)
+  sesiAdmin     SesiAdmin[]
+
+  @@map("akun_admin")
+}
+
+model SesiAdmin {
+  idSesi         String    @id @map("id_sesi") @db.Char(64)
+  idAdmin        Int       @map("id_admin") @db.UnsignedInt
+  ipPengguna     String?   @map("ip_pengguna") @db.VarChar(60)
+  agenPengguna   String?   @map("agen_pengguna") @db.VarChar(255)
+  dibuatPada     DateTime  @default(now()) @map("dibuat_pada") @db.DateTime(0)
+  kedaluwarsaPada DateTime @map("kedaluwarsa_pada") @db.DateTime(0)
+  admin          AkunAdmin @relation(fields: [idAdmin], references: [idAdmin], onDelete: Cascade)
+
+  @@index([idAdmin], map: "idx_sesi_admin_id_admin")
+  @@index([kedaluwarsaPada], map: "idx_sesi_admin_kedaluwarsa")
+  @@map("sesi_admin")
+}
+
+model RolePengguna {
+  idRole     Int      @id @default(autoincrement()) @map("id_role") @db.UnsignedInt
+  namaRole   String   @unique @map("nama_role") @db.VarChar(80)
+  deskripsi  String?  @db.VarChar(255)
+  dibuatPada DateTime @default(now()) @map("dibuat_pada") @db.Timestamp(0)
+
+  @@map("role_pengguna")
+}
+
+model KategoriBerita {
+  idKategori   Int      @id @default(autoincrement()) @map("id_kategori") @db.UnsignedInt
+  namaKategori String   @unique @map("nama_kategori") @db.VarChar(100)
+  slug         String   @unique @db.VarChar(130)
+  aktif        Boolean  @default(true)
+  dibuatPada   DateTime @default(now()) @map("dibuat_pada") @db.Timestamp(0)
+
+  @@map("kategori_berita")
+}
+
+model Berita {
+  idBerita         Int             @id @default(autoincrement()) @map("id_berita") @db.UnsignedInt
+  judul            String          @db.VarChar(220)
+  slug             String          @unique @db.VarChar(260)
+  ringkasan        String          @db.Text
+  isiPenuh         String          @map("isi_penuh") @db.LongText
+  kategori         String          @db.VarChar(100)
+  penulis          String          @db.VarChar(120)
+  gambarUrl        String?         @map("gambar_url") @db.VarChar(255)
+  tagJson          String?         @map("tag_json") @db.LongText
+  estimasiBacaMenit Int            @default(4) @map("estimasi_baca_menit") @db.UnsignedInt
+  jumlahDilihat    Int             @default(0) @map("jumlah_dilihat") @db.UnsignedInt
+  adalahPenting    Boolean         @default(false) @map("adalah_penting")
+  prioritasPenting Int             @default(0) @map("prioritas_penting")
+  statusPublikasi  StatusPublikasi @default(terbit) @map("status_publikasi")
+  tanggalTerbit    DateTime        @default(now()) @map("tanggal_terbit") @db.DateTime(0)
+  dibuatPada       DateTime        @default(now()) @map("dibuat_pada") @db.Timestamp(0)
+  diubahPada       DateTime        @updatedAt @map("diubah_pada") @db.Timestamp(0)
+
+  @@index([tanggalTerbit], map: "idx_berita_terbit")
+  @@index([adalahPenting, prioritasPenting], map: "idx_berita_penting")
+  @@index([statusPublikasi], map: "idx_berita_status")
+  @@map("berita")
+}

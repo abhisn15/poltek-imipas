@@ -1,22 +1,56 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { Search, ChevronDown } from "lucide-react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 
-const navItems = [
+type NavChildItem = {
+  label: string
+  href: string
+}
+
+type NavChildGroup = {
+  label: string
+  children: NavChildItem[]
+}
+
+type NavItem = {
+  label: string
+  href: string
+  children?: NavChildItem[]
+  childGroups?: NavChildGroup[]
+}
+
+type TopbarPemberitahuanItem = {
+  text: string
+  href: string
+}
+
+const navItems: NavItem[] = [
   { label: "Beranda", href: "/" },
   { label: "Tentang", href: "/#tentang" },
+  /* Profil disembunyikan sementara: { label: "Profil", href: "/profile" }, */
   {
     label: "Program Studi",
     href: "/program-studi",
-    children: [
-      { label: "Administrasi Keimigrasian", href: "/program-studi/administrasi-keimigrasian" },
-      { label: "Hukum Keimigrasian", href: "/program-studi/hukum-keimigrasian" },
-      { label: "Manajemen Teknologi Keimigrasian", href: "/program-studi/manajemen-teknologi-keimigrasian" },
-      { label: "Manajemen Pemasyarakatan", href: "/program-studi/manajemen-pemasyarakatan" },
-      { label: "Teknik Pemasyarakatan", href: "/program-studi/teknik-pemasyarakatan" },
-      { label: "Bimbingan Pemasyarakatan", href: "/program-studi/bimbingan-pemasyarakatan" },
+    childGroups: [
+      {
+        label: "Imigrasi",
+        children: [
+          { label: "Administrasi Keimigrasian", href: "/program-studi/administrasi-keimigrasian" },
+          { label: "Hukum Keimigrasian", href: "/program-studi/hukum-keimigrasian" },
+          { label: "Manajemen Teknologi Keimigrasian", href: "/program-studi/manajemen-teknologi-keimigrasian" },
+        ],
+      },
+      {
+        label: "Pemasyarakatan",
+        children: [
+          { label: "Teknik Pemasyarakatan", href: "/program-studi/teknik-pemasyarakatan" },
+          { label: "Bimbingan Pemasyarakatan", href: "/program-studi/bimbingan-pemasyarakatan" },
+          { label: "Manajemen Pemasyarakatan", href: "/program-studi/manajemen-pemasyarakatan" },
+        ],
+      },
     ],
   },
   { label: "Berita", href: "/berita" },
@@ -27,23 +61,68 @@ const navItems = [
   { label: "Pengumuman", href: "/pengumuman" },
 ]
 
-interface NavbarProps {
-  onSearchOpen: () => void
+const topbarPemberitahuanFallback: TopbarPemberitahuanItem[] = [
+  {
+    text: "Penting: Pendaftaran Seleksi Penerimaan Taruna Baru T.A. 2026/2027",
+    href: "/pengumuman/1",
+  },
+  {
+    text: "Penting: Jadwal Ujian Akhir Semester Genap 2025/2026",
+    href: "/pengumuman/2",
+  },
+  {
+    text: "Penting: Pengumuman Hasil Seleksi Beasiswa Unggulan POLTEKIMIPAS",
+    href: "/pengumuman/3",
+  },
+  {
+    text: "Penting: Peringatan Hari Pemasyarakatan ke-62",
+    href: "/pengumuman/4",
+  },
+]
+
+const flattenNavChildren = (item: NavItem): NavChildItem[] => {
+  if (item.childGroups?.length) {
+    return item.childGroups.flatMap((group) => group.children)
+  }
+  return item.children ?? []
 }
 
-export default function Navbar({ onSearchOpen }: NavbarProps) {
+interface NavbarProps {
+  onSearchOpen: () => void
+  /** Saat overlay pencarian terbuka, navbar tetap terlihat (tidak disembunyikan scroll). */
+  suspendScrollHide?: boolean
+}
+
+export default function Navbar({ onSearchOpen, suspendScrollHide = false }: NavbarProps) {
+  const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const [activeLink, setActiveLink] = useState("Beranda")
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null)
   const [isMobile, setIsMobile] = useState(false)
+  const [formattedDate, setFormattedDate] = useState("")
+  const topbarPemberitahuan = topbarPemberitahuanFallback
+  const [navScrollHidden, setNavScrollHidden] = useState(false)
+  const navRef = useRef<HTMLElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const lastScrollY = useRef(0)
+  const prefersReducedMotion = useRef(false)
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 1024)
     checkMobile()
     window.addEventListener("resize", checkMobile)
     return () => window.removeEventListener("resize", checkMobile)
+  }, [])
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)")
+    prefersReducedMotion.current = mq.matches
+    const onChange = () => {
+      prefersReducedMotion.current = mq.matches
+    }
+    mq.addEventListener("change", onChange)
+    return () => mq.removeEventListener("change", onChange)
   }, [])
 
   useEffect(() => {
@@ -63,6 +142,121 @@ export default function Navbar({ onSearchOpen }: NavbarProps) {
     return () => window.removeEventListener("resize", onResize)
   }, [])
 
+  useEffect(() => {
+    const nextDate = new Intl.DateTimeFormat("id-ID", {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      timeZone: "Asia/Jakarta",
+    }).format(new Date())
+    setFormattedDate(nextDate)
+  }, [])
+
+  // Samakan item aktif dengan route (tanpa mengganggu klik manual / hash)
+  useEffect(() => {
+    if (!pathname) return
+    if (pathname === "/") {
+      setActiveLink("Beranda")
+      return
+    }
+    const segment = pathname.split("/")[1]
+    const map: Record<string, string> = {
+      "program-studi": "Program Studi",
+      berita: "Berita",
+      blog: "Blog",
+      jurnal: "Jurnal",
+      perpustakaan: "Perpustakaan",
+      pengumuman: "Pengumuman",
+    }
+    if (segment && map[segment]) setActiveLink(map[segment])
+  }, [pathname])
+
+  useEffect(() => {
+    setNavScrollHidden(false)
+    lastScrollY.current = typeof window !== "undefined" ? window.scrollY : 0
+  }, [pathname])
+
+  const scrollLocked =
+    suspendScrollHide || mobileOpen || activeDropdown !== null
+
+  const onScrollNav = useCallback(() => {
+    if (typeof window === "undefined") return
+    if (scrollLocked) {
+      setNavScrollHidden(false)
+      lastScrollY.current = window.scrollY
+      return
+    }
+    if (prefersReducedMotion.current) {
+      setNavScrollHidden(false)
+      return
+    }
+
+    const y = window.scrollY
+    const prev = lastScrollY.current
+    const delta = y - prev
+    const topThreshold = 56
+
+    if (y <= topThreshold) {
+      setNavScrollHidden(false)
+    } else if (delta > 6) {
+      setNavScrollHidden(true)
+    } else if (delta < -6) {
+      setNavScrollHidden(false)
+    }
+    lastScrollY.current = y
+  }, [scrollLocked])
+
+  useEffect(() => {
+    if (scrollLocked) {
+      setNavScrollHidden(false)
+    }
+  }, [scrollLocked])
+
+  useEffect(() => {
+    window.addEventListener("scroll", onScrollNav, { passive: true })
+    return () => window.removeEventListener("scroll", onScrollNav)
+  }, [onScrollNav])
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
+
+    const navElement = navRef.current
+    if (!navElement) return
+
+    const topbarElement = navElement.querySelector<HTMLElement>(".topbar")
+    const navBodyElement = navElement.querySelector<HTMLElement>(".nav-body")
+
+    const updateNavOffset = () => {
+      const topbarHeight = topbarElement?.offsetHeight ?? 0
+      const navBodyHeight = navBodyElement?.offsetHeight ?? 0
+      const totalHeight = Math.max(0, topbarHeight + navBodyHeight)
+      document.documentElement.style.setProperty("--site-nav-offset", `${totalHeight}px`)
+    }
+
+    updateNavOffset()
+    window.addEventListener("resize", updateNavOffset)
+
+    const observer = typeof ResizeObserver !== "undefined" ? new ResizeObserver(updateNavOffset) : null
+    if (observer) {
+      if (topbarElement) observer.observe(topbarElement)
+      if (navBodyElement) observer.observe(navBodyElement)
+    }
+
+    return () => {
+      window.removeEventListener("resize", updateNavOffset)
+      observer?.disconnect()
+    }
+  }, [isMobile])
+
+  const navShellClass = [
+    "main-nav",
+    "navbar-root",
+    navScrollHidden && !scrollLocked ? "nav-scroll-hidden" : "",
+  ]
+    .filter(Boolean)
+    .join(" ")
+
   return (
     <>
       <style>{`
@@ -74,8 +268,8 @@ export default function Navbar({ onSearchOpen }: NavbarProps) {
         .topbar {
           background: #0a1628;
           border-bottom: 1px solid rgba(201,163,79,0.15);
-          padding: 6px 0;
-          font-size: 11px;
+          padding: 4px 0;
+          font-size: 10px;
           letter-spacing: 0.02em;
           color: rgba(255,255,255,0.45);
         }
@@ -91,7 +285,7 @@ export default function Navbar({ onSearchOpen }: NavbarProps) {
         .topbar-left {
           display: flex;
           align-items: center;
-          gap: 16px;
+          gap: 12px;
           overflow: hidden;
           min-width: 0;
         }
@@ -115,31 +309,152 @@ export default function Navbar({ onSearchOpen }: NavbarProps) {
           overflow: hidden;
           text-overflow: ellipsis;
           min-width: 0;
+          max-width: min(420px, 30vw);
         }
         .topbar-right {
           display: flex;
           align-items: center;
-          gap: 10px;
+          justify-content: flex-end;
+          gap: 8px;
+          flex: 1 1 auto;
+          min-width: 0;
+        }
+        .topbar-date {
+          display: inline-flex;
+          align-items: center;
+          white-space: nowrap;
           flex-shrink: 0;
+          line-height: 1;
         }
         .topbar-divider {
           width: 1px;
           height: 12px;
           background: rgba(255,255,255,0.1);
         }
+        .topbar-marquee {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          width: clamp(260px, 40vw, 620px);
+          border-left: 1px solid rgba(201,163,79,0.22);
+          border-right: 1px solid rgba(201,163,79,0.22);
+          background: linear-gradient(90deg, rgba(201,163,79,0.08), rgba(201,163,79,0.03));
+          border-radius: 6px;
+          padding: 2px 10px;
+        }
+        .topbar-marquee-prefix {
+          flex-shrink: 0;
+          font-size: 9px;
+          font-weight: 700;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          color: #e8c97a;
+          white-space: nowrap;
+        }
+        .topbar-marquee-viewport {
+          position: relative;
+          flex: 1 1 auto;
+          min-width: 0;
+          overflow: hidden;
+        }
+        .topbar-marquee-viewport::before,
+        .topbar-marquee-viewport::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          width: 12px;
+          pointer-events: none;
+          z-index: 1;
+        }
+        .topbar-marquee-viewport::before {
+          left: 0;
+          background: linear-gradient(90deg, rgba(10,22,40,0.95), rgba(10,22,40,0));
+        }
+        .topbar-marquee-viewport::after {
+          right: 0;
+          background: linear-gradient(90deg, rgba(10,22,40,0), rgba(10,22,40,0.95));
+        }
+        .topbar-marquee-track {
+          display: flex;
+          align-items: center;
+          width: max-content;
+          animation: topbar-marquee-scroll 42s linear infinite;
+          will-change: transform;
+          transform: translate3d(0, 0, 0);
+          backface-visibility: hidden;
+          contain: content;
+        }
+        .topbar-marquee-segment {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          padding-right: 16px;
+        }
+        .topbar-marquee-item {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          white-space: nowrap;
+        }
+        .topbar-marquee:hover .topbar-marquee-track {
+          animation-play-state: paused;
+        }
+        .topbar-marquee-link {
+          font-size: 10.5px;
+          letter-spacing: 0.02em;
+          color: rgba(255,255,255,0.68);
+          text-decoration: none;
+          transition: color 0.2s;
+        }
+        .topbar-marquee-link:hover {
+          color: #e8c97a;
+        }
+        .topbar-marquee-sep {
+          color: rgba(201,163,79,0.7);
+          font-size: 10px;
+          line-height: 1;
+          flex-shrink: 0;
+        }
+        @keyframes topbar-marquee-scroll {
+          0% { transform: translate3d(0, 0, 0); }
+          100% { transform: translate3d(-50%, 0, 0); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .topbar-marquee-track {
+            animation: none;
+          }
+        }
         /* Mobile topbar: hide long text & date */
         @media (max-width: 640px) {
-          .topbar-text { display: none; }
-          .topbar-badge { display: none; }
+          .topbar-inner {
+            padding: 0 10px;
+          }
+          .topbar-left { display: none; }
+          .topbar-right {
+            width: 100%;
+            justify-content: flex-start;
+          }
+          .topbar-marquee {
+            width: 100%;
+            border-left: none;
+            border-right: none;
+            border-radius: 4px;
+            padding: 2px 8px;
+            gap: 8px;
+          }
+          .topbar-marquee-prefix {
+            font-size: 9px;
+            letter-spacing: 0.04em;
+          }
+          .topbar-marquee-link {
+            font-size: 10px;
+          }
+          .topbar-marquee-track {
+            animation-duration: 48s;
+          }
           .topbar-date { display: none !important; }
           .topbar-divider { display: none; }
-          .topbar-left::after {
-            content: 'POLTEKIMIPAS';
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: 0.1em;
-            color: rgba(255,255,255,0.35);
-          }
         }
         .lang-btn {
           display: flex;
@@ -168,11 +483,20 @@ export default function Navbar({ onSearchOpen }: NavbarProps) {
           position: fixed;
           top: 0; left: 0; right: 0;
           z-index: 50;
+          transition: transform 0.42s cubic-bezier(0.4, 0, 0.2, 1);
+          will-change: transform;
+        }
+        .main-nav.nav-scroll-hidden {
+          transform: translate3d(0, -100%, 0);
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .main-nav { transition: none; }
+          .main-nav.nav-scroll-hidden { transform: none !important; }
         }
         .nav-body {
           background: rgba(10, 22, 40, 0.85);
-          padding: 12px 0;
-          transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+          padding: 10px 0;
+          transition: background 0.35s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.35s;
           border-bottom: 1px solid transparent;
         }
         .nav-inner {
@@ -262,6 +586,20 @@ export default function Navbar({ onSearchOpen }: NavbarProps) {
           gap: 1px;
         }
         @media (min-width: 1024px) { .desktop-links { display: flex; } }
+        /* Laptop lebar sedang: rapatkan menu agar tidak overflow */
+        @media (min-width: 1024px) and (max-width: 1279px) {
+          .nav-link-btn {
+            padding: 6px 8px;
+            font-size: 12px;
+          }
+          .desktop-links { gap: 0; }
+        }
+        /* Layar besar: sedikit lebih lapang */
+        @media (min-width: 1536px) {
+          .nav-inner { max-width: 1440px; }
+          .topbar-inner { max-width: 1440px; }
+          .mobile-menu-inner { max-width: 1440px; }
+        }
 
         .nav-item { position: relative; }
 
@@ -399,6 +737,28 @@ export default function Navbar({ onSearchOpen }: NavbarProps) {
           background: #c9a34f;
           transform: scale(1.3);
         }
+        .dropdown-group {
+          padding: 2px 6px 8px;
+        }
+        .dropdown-group + .dropdown-group {
+          margin-top: 4px;
+          border-top: 1px solid rgba(201,163,79,0.14);
+          padding-top: 10px;
+        }
+        .dropdown-group-title {
+          display: inline-block;
+          margin: 0 8px 6px;
+          font-size: 10px;
+          font-weight: 700;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: rgba(201,163,79,0.85);
+        }
+        .dropdown-group-links {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+        }
 
         /* ─── ACTIONS ─── */
         .actions {
@@ -450,6 +810,7 @@ export default function Navbar({ onSearchOpen }: NavbarProps) {
           color: rgba(255,255,255,0.3);
           font-family: monospace;
         }
+
         /* Desktop: show pill, hide icon */
         @media (min-width: 1024px) {
           .search-pill { display: flex; }
@@ -583,6 +944,19 @@ export default function Navbar({ onSearchOpen }: NavbarProps) {
           background: rgba(255,255,255,0.04);
         }
         .mobile-sub-link:hover::before { background: #c9a34f; }
+        .mobile-sub-group + .mobile-sub-group {
+          margin-top: 6px;
+          padding-top: 8px;
+          border-top: 1px solid rgba(201,163,79,0.16);
+        }
+        .mobile-sub-group-title {
+          margin: 0 0 6px 12px;
+          font-size: 10px;
+          font-weight: 700;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: rgba(201,163,79,0.82);
+        }
 
         .mobile-divider {
           height: 1px;
@@ -626,7 +1000,7 @@ export default function Navbar({ onSearchOpen }: NavbarProps) {
         }
       `}</style>
 
-      <nav className="main-nav navbar-root">
+      <nav ref={navRef} className={navShellClass}>
 
         {/* ── Top bar ── */}
         <div className="topbar">
@@ -636,8 +1010,32 @@ export default function Navbar({ onSearchOpen }: NavbarProps) {
               <span className="topbar-text">Kementerian Imigrasi dan Pemasyarakatan Republik Indonesia</span>
             </div>
             <div className="topbar-right">
-              <span className="topbar-date" style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.05em' }}>
-                {new Date().toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
+              <div className="topbar-marquee" aria-label="Pengumuman penting">
+                <span className="topbar-marquee-prefix">{"\u{1F514} Pemberitahuan:"}</span>
+                <div className="topbar-marquee-viewport">
+                  <div className="topbar-marquee-track">
+                    {[0, 1].map((copyIndex) => (
+                      <div
+                        key={`marquee-copy-${copyIndex}`}
+                        className="topbar-marquee-segment"
+                        aria-hidden={copyIndex === 1}
+                      >
+                        {topbarPemberitahuan.map((item) => (
+                          <span key={`${copyIndex}-${item.href}-${item.text}`} className="topbar-marquee-item">
+                            <Link href={item.href} className="topbar-marquee-link">
+                              {item.text}
+                            </Link>
+                            <span className="topbar-marquee-sep" aria-hidden="true">{"\u2022"}</span>
+                          </span>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <span className="topbar-divider" />
+              <span className="topbar-date" style={{ fontSize: '9.5px', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.05em' }}>
+                {formattedDate}
               </span>
             </div>
           </div>
@@ -669,7 +1067,7 @@ export default function Navbar({ onSearchOpen }: NavbarProps) {
             <div className="desktop-links">
               {navItems.map((item) => (
                 <div key={item.href} className="nav-item">
-                  {item.children ? (
+                  {flattenNavChildren(item).length > 0 ? (
                     <>
                       <button
                         className={`nav-link-btn ${activeDropdown === item.label ? "dropdown-active" : ""}`}
@@ -684,16 +1082,36 @@ export default function Navbar({ onSearchOpen }: NavbarProps) {
                             <div className="dropdown-notch-inner" />
                           </div>
                           <div className="dropdown-menu">
-                            {item.children.map((child) => (
-                              <Link
-                                key={child.href}
-                                href={child.href}
-                                className="dropdown-item"
-                                onClick={() => { setActiveDropdown(null); setActiveLink(item.label) }}
-                              >
-                                {child.label}
-                              </Link>
-                            ))}
+                            {item.childGroups?.length ? (
+                              item.childGroups.map((group) => (
+                                <div key={group.label} className="dropdown-group">
+                                  <div className="dropdown-group-title">{group.label}</div>
+                                  <div className="dropdown-group-links">
+                                    {group.children.map((child) => (
+                                      <Link
+                                        key={child.href}
+                                        href={child.href}
+                                        className="dropdown-item"
+                                        onClick={() => { setActiveDropdown(null); setActiveLink(item.label) }}
+                                      >
+                                        {child.label}
+                                      </Link>
+                                    ))}
+                                  </div>
+                                </div>
+                              ))
+                            ) : (
+                              flattenNavChildren(item).map((child) => (
+                                <Link
+                                  key={child.href}
+                                  href={child.href}
+                                  className="dropdown-item"
+                                  onClick={() => { setActiveDropdown(null); setActiveLink(item.label) }}
+                                >
+                                  {child.label}
+                                </Link>
+                              ))
+                            )}
                           </div>
                         </div>
                       )}
@@ -752,14 +1170,15 @@ export default function Navbar({ onSearchOpen }: NavbarProps) {
         {/* ── Mobile menu ── */}
         <div className={`mobile-menu ${mobileOpen ? "open" : ""}`}>
           <div className="mobile-menu-inner">
-            {navItems.map((item, i) => {
-              const hasChildren = !!item.children
+            {navItems.map((item) => {
+              const flatChildren = flattenNavChildren(item)
+              const hasChildren = flatChildren.length > 0
               const isExpanded = mobileExpanded === item.label
               const isActive = activeLink === item.label
 
               return (
                 <div key={item.href}>
-                  {i === 3 && <div className="mobile-divider" />}
+                  {item.label === "Berita" && <div className="mobile-divider" />}
 
                   {hasChildren ? (
                     /* Collapsible toggle for items with children */
@@ -769,13 +1188,13 @@ export default function Navbar({ onSearchOpen }: NavbarProps) {
                     >
                       {item.label}
                       <div className="mobile-link-right">
-                        {item.children && (
+                        {hasChildren && (
                           <span style={{
                             fontSize: '10px',
                             color: 'rgba(255,255,255,0.25)',
                             fontWeight: 400,
                           }}>
-                            {item.children.length}
+                            {flatChildren.length}
                           </span>
                         )}
                         <ChevronDown className={`mobile-chevron ${isExpanded ? "open" : ""}`} />
@@ -795,16 +1214,34 @@ export default function Navbar({ onSearchOpen }: NavbarProps) {
                   {hasChildren && (
                     <div className={`mobile-sub ${isExpanded ? "open" : ""}`}>
                       <div className="mobile-sub-inner">
-                        {item.children!.map((child) => (
-                          <Link
-                            key={child.href}
-                            href={child.href}
-                            className="mobile-sub-link"
-                            onClick={() => { setMobileOpen(false); setActiveLink(item.label) }}
-                          >
-                            {child.label}
-                          </Link>
-                        ))}
+                        {item.childGroups?.length ? (
+                          item.childGroups.map((group) => (
+                            <div key={group.label} className="mobile-sub-group">
+                              <div className="mobile-sub-group-title">{group.label}</div>
+                              {group.children.map((child) => (
+                                <Link
+                                  key={child.href}
+                                  href={child.href}
+                                  className="mobile-sub-link"
+                                  onClick={() => { setMobileOpen(false); setActiveLink(item.label) }}
+                                >
+                                  {child.label}
+                                </Link>
+                              ))}
+                            </div>
+                          ))
+                        ) : (
+                          flatChildren.map((child) => (
+                            <Link
+                              key={child.href}
+                              href={child.href}
+                              className="mobile-sub-link"
+                              onClick={() => { setMobileOpen(false); setActiveLink(item.label) }}
+                            >
+                              {child.label}
+                            </Link>
+                          ))
+                        )}
                       </div>
                     </div>
                   )}

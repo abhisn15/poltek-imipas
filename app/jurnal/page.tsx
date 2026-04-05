@@ -4,6 +4,8 @@ import { useState } from "react"
 import { ExternalLink, Filter, FileText, Send, ArrowLeft, Calendar } from "lucide-react"
 import Link from "next/link"
 
+import { SiteFilterCombobox } from "@/components/site-filter-combobox"
+
 const journals = [
   {
     id: 1,
@@ -112,34 +114,39 @@ export default function JournalPage() {
           </p>
         </div>
 
-        {/* Filters */}
-        <div className="mb-8 flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Filter className="h-4 w-4" />
-            Filter:
+        {/* Filter — combobox seperti halaman berita */}
+        <div className="relative mb-8 overflow-hidden rounded-2xl border border-[#d6dde6]/80 bg-white p-4 shadow-[0_12px_40px_-12px_rgba(15,38,71,0.12)] ring-1 ring-[#f0dca6]/40 md:p-6">
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#c9a84c]/80 via-[#f0d78c]/70 to-[#c9a84c]/80" />
+          <div className="mt-2 grid gap-5 sm:grid-cols-2 lg:items-end">
+            <div>
+              <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-[#1b3a6b]">
+                <Calendar className="h-4 w-4 text-[#c9a84c]" />
+                Tahun terbit
+              </div>
+              <SiteFilterCombobox
+                options={years.map((y) => (y === "Semua" ? "Semua tahun" : y))}
+                value={filterYear === "Semua" ? "Semua tahun" : filterYear}
+                onChange={(v) => setFilterYear(v === "Semua tahun" ? "Semua" : v)}
+                searchPlaceholder="Cari tahun..."
+                emptyText="Tidak ada opsi yang cocok."
+                ariaLabel="Pilih tahun terbit"
+              />
+            </div>
+            <div>
+              <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-[#1b3a6b]">
+                <Filter className="h-4 w-4 text-[#c9a84c]" />
+                Program studi
+              </div>
+              <SiteFilterCombobox
+                options={programs.map((p) => (p === "Semua" ? "Semua program studi" : p))}
+                value={filterProgram === "Semua" ? "Semua program studi" : filterProgram}
+                onChange={(v) => setFilterProgram(v === "Semua program studi" ? "Semua" : v)}
+                searchPlaceholder="Cari program studi..."
+                emptyText="Tidak ada opsi yang cocok."
+                ariaLabel="Pilih program studi"
+              />
+            </div>
           </div>
-          <select
-            value={filterYear}
-            onChange={(e) => setFilterYear(e.target.value)}
-            className="rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground focus:border-navy focus:outline-none"
-          >
-            {years.map((y) => (
-              <option key={y} value={y}>
-                {y === "Semua" ? "Semua Tahun" : y}
-              </option>
-            ))}
-          </select>
-          <select
-            value={filterProgram}
-            onChange={(e) => setFilterProgram(e.target.value)}
-            className="rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground focus:border-navy focus:outline-none"
-          >
-            {programs.map((p) => (
-              <option key={p} value={p}>
-                {p === "Semua" ? "Semua Program Studi" : p}
-              </option>
-            ))}
-          </select>
         </div>
 
         {/* Journal list */}

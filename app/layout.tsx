@@ -3,6 +3,7 @@ import { Inter, Poppins } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import "./globals.css"
+import SiteChrome from "@/components/site-chrome"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -40,11 +41,12 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="id">
+    <html lang="id" suppressHydrationWarning>
       <body
+        suppressHydrationWarning
         className={`${inter.variable} ${poppins.variable} font-sans antialiased`}
       >
-        {children}
+        <SiteChrome>{children}</SiteChrome>
         <Analytics />
         <SpeedInsights />
       </body>
