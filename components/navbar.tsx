@@ -1086,15 +1086,26 @@ export default function Navbar({ onSearchOpen, suspendScrollHide = false }: Navb
                 </div>
               </div>
               <span className="topbar-divider" />
-              <span className="topbar-date" style={{ fontSize: '9.5px', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.04em', gap: '5px' }}>
-                {formattedDate}
+              <span
+                className="topbar-date"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  fontSize: '9.5px',
+                  color: 'rgba(255,255,255,0.3)',
+                  letterSpacing: '0.04em',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                <span>{formattedDate}</span>
                 {formattedTime && (
                   <>
-                    <span style={{ margin: '0 3px', opacity: 0.35 }}>|</span>
-                    <span style={{ fontVariantNumeric: 'tabular-nums', color: 'rgba(201,163,79,0.65)', fontWeight: 600, letterSpacing: '0.06em' }}>
+                    <span style={{ opacity: 0.25 }}>|</span>
+                    <span style={{ fontVariantNumeric: 'tabular-nums', color: 'rgba(201,163,79,0.7)', fontWeight: 600, letterSpacing: '0.06em' }}>
                       {formattedTime}
                     </span>
-                    <span style={{ marginLeft: '3px', fontSize: '8px', color: 'rgba(201,163,79,0.45)', fontWeight: 700, letterSpacing: '0.08em' }}>
+                    <span style={{ fontSize: '8px', color: 'rgba(201,163,79,0.5)', fontWeight: 700, letterSpacing: '0.08em' }}>
                       {tzLabel}
                     </span>
                   </>
