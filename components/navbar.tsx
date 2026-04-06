@@ -112,6 +112,8 @@ export default function Navbar({ onSearchOpen, suspendScrollHide = false }: Navb
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null)
   const [isMobile, setIsMobile] = useState(false)
   const [formattedDate, setFormattedDate] = useState("")
+  const [formattedTime, setFormattedTime] = useState("")
+  const [tzLabel, setTzLabel] = useState("")
   const topbarPemberitahuan = topbarPemberitahuanFallback.filter((item) => item.penting)
   const topbarPemberitahuanAman =
     topbarPemberitahuan.length > 0
@@ -158,14 +160,47 @@ export default function Navbar({ onSearchOpen, suspendScrollHide = false }: Navb
   }, [])
 
   useEffect(() => {
-    const nextDate = new Intl.DateTimeFormat("id-ID", {
-      weekday: "short",
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-      timeZone: "Asia/Jakarta",
-    }).format(new Date())
-    setFormattedDate(nextDate)
+    // Deteksi timezone pengguna dan tentukan label
+    const userTz = Intl.DateTimeFormat().resolvedOptions().timeZone
+    const tzMap: Record<string, string> = {
+      "Asia/Jakarta": "WIB",
+      "Asia/Pontianak": "WIB",
+      "Asia/Makassar": "WITA",
+      "Asia/Balikpapan": "WITA",
+      "Asia/Ujung_Pandang": "WITA",
+      "Asia/Jayapura": "WIT",
+    }
+    const label = tzMap[userTz] ?? new Intl.DateTimeFormat("en", {
+      timeZoneName: "short",
+      timeZone: userTz,
+    }).formatToParts(new Date()).find((p) => p.type === "timeZoneName")?.value ?? "LT"
+    setTzLabel(label)
+
+    const tick = () => {
+      const now = new Date()
+      setFormattedDate(
+        new Intl.DateTimeFormat("id-ID", {
+          weekday: "short",
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+          timeZone: userTz,
+        }).format(now)
+      )
+      setFormattedTime(
+        new Intl.DateTimeFormat("id-ID", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false,
+          timeZone: userTz,
+        }).format(now)
+      )
+    }
+
+    tick()
+    const id = setInterval(tick, 1000)
+    return () => clearInterval(id)
   }, [])
 
   // Samakan item aktif dengan route (tanpa mengganggu klik manual / hash)
@@ -1051,8 +1086,19 @@ export default function Navbar({ onSearchOpen, suspendScrollHide = false }: Navb
                 </div>
               </div>
               <span className="topbar-divider" />
-              <span className="topbar-date" style={{ fontSize: '9.5px', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.05em' }}>
+              <span className="topbar-date" style={{ fontSize: '9.5px', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.04em', gap: '5px' }}>
                 {formattedDate}
+                {formattedTime && (
+                  <>
+                    <span style={{ margin: '0 3px', opacity: 0.35 }}>|</span>
+                    <span style={{ fontVariantNumeric: 'tabular-nums', color: 'rgba(201,163,79,0.65)', fontWeight: 600, letterSpacing: '0.06em' }}>
+                      {formattedTime}
+                    </span>
+                    <span style={{ marginLeft: '3px', fontSize: '8px', color: 'rgba(201,163,79,0.45)', fontWeight: 700, letterSpacing: '0.08em' }}>
+                      {tzLabel}
+                    </span>
+                  </>
+                )}
               </span>
             </div>
           </div>
