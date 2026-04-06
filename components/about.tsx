@@ -123,20 +123,6 @@ export default function About() {
                 </div>
               </div>
 
-              {/* Legend */}
-              <div className="mt-6 flex flex-wrap gap-3 border-t border-slate-100 pt-4">
-                {[
-                  { singkatan: "AIM", nama: "Akademi Imigrasi" },
-                  { singkatan: "AKIP", nama: "Akademi Pemasyarakatan" },
-                  { singkatan: "Poltekim", nama: "Politeknik Imigrasi" },
-                  { singkatan: "Poltekip", nama: "Politeknik Pemasyarakatan" },
-                ].map((l) => (
-                  <div key={l.singkatan} className="flex items-center gap-1.5 text-[11px] text-slate-500">
-                    <span className="font-bold text-navy">{l.singkatan}</span>
-                    <span>= {l.nama}</span>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </div>
