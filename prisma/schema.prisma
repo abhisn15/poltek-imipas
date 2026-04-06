@@ -88,3 +88,43 @@ model Berita {
   @@index([statusPublikasi], map: "idx_berita_status")
   @@map("berita")
 }
+
+model Pejabat {
+  idPejabat  Int      @id @default(autoincrement()) @map("id_pejabat") @db.UnsignedInt
+  nama       String   @db.VarChar(160)
+  jabatan    String   @db.VarChar(200)
+  singkatan  String   @default("") @db.VarChar(10)
+  email      String   @default("") @db.VarChar(160)
+  telepon    String   @default("") @db.VarChar(30)
+  bidangJson String?  @map("bidang_json") @db.Text
+  fotoUrl    String?  @map("foto_url") @db.VarChar(255)
+  urutan     Int      @default(99) @db.UnsignedInt
+  aktif      Boolean  @default(true)
+  dibuatPada DateTime @default(now()) @map("dibuat_pada") @db.Timestamp(0)
+  diubahPada DateTime @updatedAt @map("diubah_pada") @db.Timestamp(0)
+
+  @@index([urutan], map: "idx_pejabat_urutan")
+  @@map("pejabat")
+}
+
+model Dosen {
+  idDosen          Int      @id @default(autoincrement()) @map("id_dosen") @db.UnsignedInt
+  slug             String   @unique @db.VarChar(200)
+  nama             String   @db.VarChar(160)
+  gelar            String   @default("") @db.VarChar(80)
+  jabatan          String   @db.VarChar(200)
+  bidangKeahlianJson String? @map("bidang_keahlian_json") @db.Text
+  deskripsi        String   @db.Text
+  email            String   @default("") @db.VarChar(160)
+  ruang            String   @default("") @db.VarChar(100)
+  fotoUrl          String?  @map("foto_url") @db.VarChar(255)
+  jurnalJson       String?  @map("jurnal_json") @db.LongText
+  aktif            Boolean  @default(true)
+  urutan           Int      @default(99) @db.UnsignedInt
+  dibuatPada       DateTime @default(now()) @map("dibuat_pada") @db.Timestamp(0)
+  diubahPada       DateTime @updatedAt @map("diubah_pada") @db.Timestamp(0)
+
+  @@index([slug], map: "idx_dosen_slug")
+  @@index([urutan], map: "idx_dosen_urutan")
+  @@map("dosen")
+}

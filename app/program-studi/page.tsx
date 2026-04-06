@@ -440,7 +440,7 @@ export default function ProgramStudiPage() {
         <div className="reading-progress" style={{ width: `${scrollProgress}%` }} />
 
         {/* Hero Section */}
-        <section className="programs-hero py-20">
+        <section className="programs-hero pb-20 pt-28 md:pt-32">
           <div className="programs-hero-content max-w-7xl mx-auto px-4">
             <Link href="/" className="back-button">
               <ArrowLeft className="h-4 w-4" />

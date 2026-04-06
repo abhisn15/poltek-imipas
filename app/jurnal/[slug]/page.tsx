@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { ExternalLink, FileText, ArrowLeft, Calendar, User, Tag, Share2, Download } from "lucide-react"
+import { FileText, ArrowLeft, Calendar, User, Tag, Share2 } from "lucide-react"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 
@@ -250,19 +250,14 @@ export default function JournalDetailPage({ params }: { params: Promise<{ slug: 
             
             <div className="flex gap-2">
               <a
-                href={`https://doi.org/${journal.doi}`}
+                href="/pdfs/pratinjau-jurnal.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-4 py-2 border border-gold text-sm font-medium text-navy transition-all hover:bg-gold hover:text-primary-foreground rounded-lg"
               >
-                <ExternalLink className="h-4 w-4" />
-                DOI
+                <FileText className="h-4 w-4" />
+                Preview PDF
               </a>
-              
-              <button className="inline-flex items-center gap-2 px-4 py-2 bg-navy text-primary-foreground text-sm font-medium rounded-lg hover:bg-navy/90 transition-colors">
-                <Download className="h-4 w-4" />
-                Download PDF
-              </button>
             </div>
           </div>
 

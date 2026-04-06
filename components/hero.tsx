@@ -98,10 +98,10 @@ export default function Hero() {
 
         <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
           <a
-            href="#tentang"
+            href="/profile"
             className="inline-flex items-center gap-2 rounded-lg bg-gold px-6 py-3 text-sm font-semibold text-navy-dark transition-all hover:bg-gold-light hover:shadow-lg"
           >
-            Pelajari Lebih Lanjut
+            Lihat Profil Institusi
             <ChevronDown className="h-4 w-4" />
           </a>
         </div>
@@ -110,7 +110,7 @@ export default function Hero() {
         <div className="mx-auto mt-16 grid max-w-3xl grid-cols-3 gap-8">
           <div className="text-center">
             <CountUp 
-              target={2500} 
+              target={1727} 
               suffix="+" 
               icon={<Users className="h-6 w-6" />}
             />
@@ -132,7 +132,7 @@ export default function Hero() {
           
           <div className="text-center">
             <CountUp 
-              target={60} 
+              target={64} 
               suffix="+" 
               icon={<Clock className="h-6 w-6" />}
             />

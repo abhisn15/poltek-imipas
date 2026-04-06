@@ -4,16 +4,17 @@ import { useEffect, useState } from "react"
 import { MapPin, Phone, Mail, Instagram, Facebook, Youtube, Twitter } from "lucide-react"
 
 const sitemapLinks = [
-  { label: "Beranda", href: "#beranda" },
-  { label: "Tentang", href: "#tentang" },
+  { label: "Beranda", href: "/" },
   { label: "Profil", href: "/profile" },
-  { label: "Program Studi", href: "#program-studi" },
-  { label: "Berita", href: "#berita" },
-  { label: "Blog", href: "#blog" },
-  { label: "Jurnal Ilmiah", href: "#jurnal" },
-  { label: "Perpustakaan", href: "#perpustakaan" },
-  { label: "Galeri", href: "#galeri" },
-  { label: "Pengumuman", href: "#pengumuman" },
+  { label: "Pejabat", href: "/profile/pejabat" },
+  { label: "Dosen", href: "/profile/dosen" },
+  { label: "Program Studi", href: "/program-studi" },
+  { label: "Berita", href: "/berita" },
+  { label: "Blog", href: "/blog" },
+  { label: "Jurnal Ilmiah", href: "/jurnal" },
+  { label: "Perpustakaan", href: "/perpustakaan" },
+  { label: "Galeri", href: "/galeri" },
+  { label: "Pengumuman", href: "/pengumuman" },
 ]
 
 const socialLinks = [
@@ -352,7 +353,7 @@ export default function Footer() {
 
             {/* Brand */}
             <div>
-              <a href="#beranda" className="footer-logo-wrap">
+              <a href="/" className="footer-logo-wrap">
                 <div className="footer-logo-badge">P</div>
                 <div>
                   <div className="footer-logo-name">POLTEKIMIPAS</div>

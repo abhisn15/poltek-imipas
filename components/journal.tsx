@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ExternalLink, Filter, FileText, Send } from "lucide-react"
+import { Filter, FileText, Send } from "lucide-react"
 import Link from "next/link"
 
 const journals = [
@@ -153,13 +153,13 @@ export default function Journal() {
                   </Link>
                   
                   <a
-                    href={`https://doi.org/${journal.doi}`}
+                    href="/pdfs/pratinjau-jurnal.pdf"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-gold px-4 py-2 text-sm font-medium text-navy transition-all hover:bg-gold hover:text-primary-foreground"
                   >
-                    <ExternalLink className="h-3.5 w-3.5" />
-                    DOI
+                    <FileText className="h-3.5 w-3.5" />
+                    Preview PDF
                   </a>
                 </div>
               </div>

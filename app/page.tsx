@@ -12,7 +12,6 @@ import News from "@/components/news"
 import Blog from "@/components/blog"
 import Journal from "@/components/journal"
 import Library from "@/components/library"
-import Gallery from "@/components/gallery"
 import Announcements from "@/components/announcements"
 import Footer from "@/components/footer"
 import CookieBanner from "@/components/cookie-banner"
@@ -67,13 +66,12 @@ export default function Home() {
         <AnnouncementTicker />
         <Hero />
         <About />
-        <Programs />
         <News />
+        <Announcements />
         <Blog />
         <Journal />
         <Library />
-        <Gallery />
-        <Announcements />
+        <Programs />
         <Footer />
         <CookieBanner />
         <BackToTop />

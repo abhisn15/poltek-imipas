@@ -25,12 +25,19 @@ type NavItem = {
 type TopbarPemberitahuanItem = {
   text: string
   href: string
+  penting: boolean
 }
 
 const navItems: NavItem[] = [
   { label: "Beranda", href: "/" },
-  { label: "Tentang", href: "/#tentang" },
-  /* Profil disembunyikan sementara: { label: "Profil", href: "/profile" }, */
+  {
+    label: "Profil",
+    href: "/profile",
+    children: [
+      { label: "Pejabat", href: "/profile/pejabat" },
+      { label: "Dosen", href: "/profile/dosen" },
+    ],
+  },
   {
     label: "Program Studi",
     href: "/program-studi",
@@ -57,26 +64,30 @@ const navItems: NavItem[] = [
   { label: "Blog", href: "/blog" },
   { label: "Jurnal", href: "/jurnal" },
   { label: "Perpustakaan", href: "/perpustakaan" },
-  { label: "Galeri", href: "/#galeri" },
+  { label: "Galeri", href: "/galeri" },
   { label: "Pengumuman", href: "/pengumuman" },
 ]
 
 const topbarPemberitahuanFallback: TopbarPemberitahuanItem[] = [
   {
-    text: "Penting: Pendaftaran Seleksi Penerimaan Taruna Baru T.A. 2026/2027",
+    text: "Pendaftaran Seleksi Penerimaan Taruna Baru T.A. 2026/2027",
     href: "/pengumuman/1",
+    penting: true,
   },
   {
-    text: "Penting: Jadwal Ujian Akhir Semester Genap 2025/2026",
+    text: "Jadwal Ujian Akhir Semester Genap 2025/2026",
     href: "/pengumuman/2",
+    penting: false,
   },
   {
-    text: "Penting: Pengumuman Hasil Seleksi Beasiswa Unggulan POLTEKIMIPAS",
+    text: "Pengumuman Hasil Seleksi Beasiswa Unggulan POLTEKIMIPAS",
     href: "/pengumuman/3",
+    penting: false,
   },
   {
-    text: "Penting: Peringatan Hari Pemasyarakatan ke-62",
+    text: "Peringatan Hari Pemasyarakatan ke-62",
     href: "/pengumuman/4",
+    penting: false,
   },
 ]
 
@@ -101,7 +112,11 @@ export default function Navbar({ onSearchOpen, suspendScrollHide = false }: Navb
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null)
   const [isMobile, setIsMobile] = useState(false)
   const [formattedDate, setFormattedDate] = useState("")
-  const topbarPemberitahuan = topbarPemberitahuanFallback
+  const topbarPemberitahuan = topbarPemberitahuanFallback.filter((item) => item.penting)
+  const topbarPemberitahuanAman =
+    topbarPemberitahuan.length > 0
+      ? topbarPemberitahuan
+      : [{ text: "Belum ada pengumuman penting.", href: "/pengumuman", penting: true }]
   const [navScrollHidden, setNavScrollHidden] = useState(false)
   const navRef = useRef<HTMLElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -162,11 +177,13 @@ export default function Navbar({ onSearchOpen, suspendScrollHide = false }: Navb
     }
     const segment = pathname.split("/")[1]
     const map: Record<string, string> = {
+      profile: "Profil",
       "program-studi": "Program Studi",
       berita: "Berita",
       blog: "Blog",
       jurnal: "Jurnal",
       perpustakaan: "Perpustakaan",
+      galeri: "Galeri",
       pengumuman: "Pengumuman",
     }
     if (segment && map[segment]) setActiveLink(map[segment])
@@ -1011,7 +1028,7 @@ export default function Navbar({ onSearchOpen, suspendScrollHide = false }: Navb
             </div>
             <div className="topbar-right">
               <div className="topbar-marquee" aria-label="Pengumuman penting">
-                <span className="topbar-marquee-prefix">{"\u{1F514} Pemberitahuan:"}</span>
+                <span className="topbar-marquee-prefix">{"\u{1F514} Pengumuman:"}</span>
                 <div className="topbar-marquee-viewport">
                   <div className="topbar-marquee-track">
                     {[0, 1].map((copyIndex) => (
@@ -1020,7 +1037,7 @@ export default function Navbar({ onSearchOpen, suspendScrollHide = false }: Navb
                         className="topbar-marquee-segment"
                         aria-hidden={copyIndex === 1}
                       >
-                        {topbarPemberitahuan.map((item) => (
+                        {topbarPemberitahuanAman.map((item) => (
                           <span key={`${copyIndex}-${item.href}-${item.text}`} className="topbar-marquee-item">
                             <Link href={item.href} className="topbar-marquee-link">
                               {item.text}
@@ -1070,7 +1087,7 @@ export default function Navbar({ onSearchOpen, suspendScrollHide = false }: Navb
                   {flattenNavChildren(item).length > 0 ? (
                     <>
                       <button
-                        className={`nav-link-btn ${activeDropdown === item.label ? "dropdown-active" : ""}`}
+                        className={`nav-link-btn ${activeLink === item.label ? "active" : ""} ${activeDropdown === item.label ? "dropdown-active" : ""}`}
                         onClick={() => setActiveDropdown(activeDropdown === item.label ? null : item.label)}
                       >
                         {item.label}

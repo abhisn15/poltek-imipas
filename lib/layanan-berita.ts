@@ -310,6 +310,7 @@ export async function ambilBeritaPentingNavbar(batas = 6) {
   const daftar = await prisma.berita.findMany({
     where: {
       statusPublikasi: "terbit",
+      kategori: "Pengumuman",
       adalahPenting: true,
     },
     orderBy: [{ prioritasPenting: "desc" }, { tanggalTerbit: "desc" }],
@@ -325,7 +326,7 @@ export async function ambilBeritaPentingNavbar(batas = 6) {
   return daftar.map((item) => ({
     idBerita: item.idBerita,
     judul: item.judul,
-    judulMarquee: `Penting: ${item.judul}`,
+    judulMarquee: `Pengumuman penting: ${item.judul}`,
     slug: item.slug,
     prioritasPenting: item.prioritasPenting,
   }))
@@ -360,6 +361,7 @@ export async function ambilRingkasanDashboard() {
     prisma.berita.count({
       where: {
         statusPublikasi: "terbit",
+        kategori: "Pengumuman",
         adalahPenting: true,
       },
     }),

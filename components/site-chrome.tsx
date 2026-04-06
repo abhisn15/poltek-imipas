@@ -4,6 +4,7 @@ import { useState } from "react"
 import { usePathname } from "next/navigation"
 
 import Navbar from "@/components/navbar"
+import Footer from "@/components/footer"
 import SearchOverlay from "@/components/search-overlay"
 import RouteTransition from "@/components/route-transition"
 
@@ -16,7 +17,6 @@ export default function SiteChrome({ children }: { children: React.ReactNode }) 
   const showSiteNav = !HIDDEN_PATHS.some(
     (p) => pathname === p || pathname.startsWith(`${p}/`),
   )
-  const butuhOffsetKonten = showSiteNav && pathname !== "/"
 
   return (
     <>
@@ -30,8 +30,9 @@ export default function SiteChrome({ children }: { children: React.ReactNode }) 
         </>
       )}
       <RouteTransition>
-        <div className={butuhOffsetKonten ? "site-content-offset" : undefined}>{children}</div>
+        <div>{children}</div>
       </RouteTransition>
+      {showSiteNav && <Footer />}
     </>
   )
 }

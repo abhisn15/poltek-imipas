@@ -440,7 +440,7 @@ export default function BlogPage() {
       `}</style>
       <div className="blog-root">
         {/* Hero Section */}
-        <section className="blog-hero pb-24 pt-16 md:pb-28 md:pt-20">
+        <section className="blog-hero pb-24 pt-28 md:pb-28 md:pt-32">
           <div className="blog-hero-content max-w-7xl mx-auto px-4">
             <Link href="/" className="back-button">
               <ArrowLeft className="h-4 w-4" />

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Shield, Wrench, Users, ArrowLeft, ArrowRight, BookOpen, Award, Clock, Users2, MapPin, Phone, Mail, FileText, Download, CheckCircle, Target, TrendingUp, UserCheck } from "lucide-react"
+import { Shield, Wrench, Users, ArrowLeft, ArrowRight, BookOpen, Award, Clock, Users2, FileText, Download, CheckCircle, Target, TrendingUp, UserCheck } from "lucide-react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 
@@ -908,50 +908,6 @@ export default function ProgramDetailPage() {
                   <p>{prospek}</p>
                 </div>
               ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Biaya Pendidikan */}
-        <section className="section section-white">
-          <div className="max-w-7xl mx-auto px-4">
-            <h2 className="text-3xl font-bold text-navy mb-8 text-center">Biaya Pendidikan</h2>
-            <div className="grid-2">
-              <div className="info-card">
-                <h3><FileText className="h-5 w-5" /> Rincian Biaya per Semester</h3>
-                <ul className="feature-list">
-                  <li>
-                    <span className="font-semibold">SPP:</span> {program.biaya.spp}
-                  </li>
-                  <li>
-                    <span className="font-semibold">Praktik:</span> {program.biaya.praktik}
-                  </li>
-                  <li>
-                    <span className="font-semibold">Alat (sekali):</span> {program.biaya.alat}
-                  </li>
-                  <li className="border-t pt-4">
-                    <span className="font-bold text-navy">Total per tahun:</span> {program.biaya.total}
-                  </li>
-                </ul>
-              </div>
-              
-              <div className="info-card">
-                <h3><Phone className="h-5 w-5" /> Kontak Program Studi</h3>
-                <div className="space-y-3">
-                  <div className="contact-item">
-                    <Mail className="h-5 w-5 icon" />
-                    <span>{program.kontak.email}</span>
-                  </div>
-                  <div className="contact-item">
-                    <Phone className="h-5 w-5 icon" />
-                    <span>{program.kontak.telepon}</span>
-                  </div>
-                  <div className="contact-item">
-                    <MapPin className="h-5 w-5 icon" />
-                    <span>{program.kontak.lokasi}</span>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </section>

@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     const data = await ambilBeritaPentingNavbar(Number.isFinite(batas) ? batas : 6)
     return NextResponse.json({ data })
   } catch (error) {
-    console.error("Gagal ambil berita penting:", error)
+    console.error("Gagal ambil pengumuman penting:", error)
     return NextResponse.json(
       { message: "Terjadi kesalahan pada server." },
       { status: 500 },

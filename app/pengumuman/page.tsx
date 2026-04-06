@@ -304,7 +304,7 @@ const announcements = [
 export default function AnnouncementsPage() {
   return (
     <div className="min-h-screen bg-cream">
-      <div className="mx-auto max-w-4xl px-4 py-12">
+      <div className="mx-auto max-w-4xl px-4 pb-12 pt-24">
         {/* Header */}
         <div className="mb-12 text-center">
           <Link 

@@ -578,36 +578,95 @@ export default function RichTextEditor({
   }, [status, value])
 
   return (
-    <div className={`editor-berita space-y-1 ${className}`.trim()}>
-      <div className="rounded-lg border border-[#d6dde6] bg-white">
+    <div className={`editor-berita space-y-2 ${className}`.trim()}>
+      <div className="relative rounded-xl border border-[#d6dde6] bg-white overflow-hidden">
+
+        {/* ── Skeleton saat CKEditor masih loading ── */}
         {status === "loading" && (
-          <div className="rounded-lg border-b border-[#e5ebf3] bg-[#f8fbff] px-3 py-2 text-xs text-[#64748b]">
-            Menyiapkan CKEditor...
+          <div className="animate-pulse">
+            {/* Skeleton toolbar */}
+            <div className="flex flex-wrap items-center gap-1.5 border-b border-[#e5ebf3] bg-[#f8fbff] px-3 py-2.5">
+              {/* Undo/Redo */}
+              <div className="h-6 w-6 rounded bg-[#e5ebf3]" />
+              <div className="h-6 w-6 rounded bg-[#e5ebf3]" />
+              <div className="mx-1 h-5 w-px bg-[#dde3ea]" />
+              {/* Heading */}
+              <div className="h-6 w-20 rounded bg-[#e5ebf3]" />
+              <div className="mx-1 h-5 w-px bg-[#dde3ea]" />
+              {/* Font controls */}
+              <div className="h-6 w-16 rounded bg-[#e5ebf3]" />
+              <div className="h-6 w-20 rounded bg-[#e5ebf3]" />
+              <div className="h-6 w-6 rounded bg-[#e5ebf3]" />
+              <div className="h-6 w-6 rounded bg-[#e5ebf3]" />
+              <div className="mx-1 h-5 w-px bg-[#dde3ea]" />
+              {/* Bold/Italic/etc */}
+              <div className="h-6 w-6 rounded bg-[#e5ebf3]" />
+              <div className="h-6 w-6 rounded bg-[#e5ebf3]" />
+              <div className="h-6 w-6 rounded bg-[#e5ebf3]" />
+              <div className="h-6 w-6 rounded bg-[#e5ebf3]" />
+              <div className="mx-1 h-5 w-px bg-[#dde3ea]" />
+              {/* Insert tools */}
+              <div className="h-6 w-6 rounded bg-[#e5ebf3]" />
+              <div className="h-6 w-6 rounded bg-[#e5ebf3]" />
+              <div className="h-6 w-6 rounded bg-[#e5ebf3]" />
+              <div className="mx-1 h-5 w-px bg-[#dde3ea]" />
+              {/* List */}
+              <div className="h-6 w-6 rounded bg-[#e5ebf3]" />
+              <div className="h-6 w-6 rounded bg-[#e5ebf3]" />
+              <div className="h-6 w-6 rounded bg-[#e5ebf3]" />
+            </div>
+            {/* Skeleton content area */}
+            <div className="space-y-3 px-5 py-5" style={{ minHeight: 260 }}>
+              <div className="h-4 w-3/4 rounded-full bg-[#e5ebf3]" />
+              <div className="h-4 w-full rounded-full bg-[#e5ebf3]" />
+              <div className="h-4 w-5/6 rounded-full bg-[#e5ebf3]" />
+              <div className="h-4 w-full rounded-full bg-[#e5ebf3]" />
+              <div className="h-4 w-2/3 rounded-full bg-[#e5ebf3]" />
+              <div className="mt-4 h-4 w-4/5 rounded-full bg-[#e5ebf3]" />
+              <div className="h-4 w-full rounded-full bg-[#e5ebf3]" />
+              <div className="h-4 w-3/5 rounded-full bg-[#e5ebf3]" />
+            </div>
+            {/* Loading badge */}
+            <div className="absolute bottom-3 right-4 flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1 text-[11px] font-medium text-[#8a97aa] shadow-sm border border-[#e5ebf3]">
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#1b3a6b] opacity-60 animate-bounce" style={{ animationDelay: "0ms" }} />
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#1b3a6b] opacity-60 animate-bounce" style={{ animationDelay: "150ms" }} />
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#1b3a6b] opacity-60 animate-bounce" style={{ animationDelay: "300ms" }} />
+              Memuat editor...
+            </div>
           </div>
         )}
 
         {status === "error" && (
-          <div className="rounded-lg border-b border-[#fde7e7] bg-[#fff4f4] px-3 py-2 text-xs text-[#b42318]">
+          <div className="flex items-center gap-2 rounded-t-xl border-b border-[#fde7e7] bg-[#fff4f4] px-4 py-2.5 text-xs text-[#b42318]">
+            <span className="font-semibold">⚠ Error:</span>
             {pesanError}
           </div>
         )}
 
         {pesanPeringatan && (
-          <div className="rounded-lg border-b border-[#f1ddad] bg-[#fffbef] px-3 py-2 text-xs text-[#7a5c1d]">
+          <div className="flex items-center gap-2 border-b border-[#f1ddad] bg-[#fffbef] px-4 py-2.5 text-xs text-[#7a5c1d]">
+            <span>⚠</span>
             {pesanPeringatan}
           </div>
         )}
 
-        <div ref={hostEditorRef} className="ck-editor-host" />
+        {/* Editor host — selalu ada di DOM agar CKEditor bisa mount ke sini */}
+        <div
+          ref={hostEditorRef}
+          className="ck-editor-host"
+          style={{ display: status === "loading" ? "none" : undefined }}
+        />
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-[#7b8899]">
+      <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-[#8a97aa]">
         <span>
-          Tips: bisa <strong>paste gambar langsung</strong> atau paste URL gambar dari internet, lalu sistem simpan otomatis ke folder lokal.
+          Bisa <strong className="text-[#5a6b7f]">paste gambar</strong> langsung atau paste URL gambar internet — sistem simpan otomatis.
         </span>
-        <span className="rounded-full border border-[#d6dde6] bg-[#f7f9fc] px-2 py-0.5 font-medium text-[#5f6f84]">
-          {jumlahKata}
-        </span>
+        {status === "ready" && (
+          <span className="rounded-full border border-[#d6dde6] bg-[#f7f9fc] px-2.5 py-0.5 font-semibold text-[#5f6f84]">
+            {jumlahKata}
+          </span>
+        )}
       </div>
     </div>
   )

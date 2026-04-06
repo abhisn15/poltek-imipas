@@ -183,7 +183,7 @@ function BeritaContent() {
 
   return (
     <div className="min-h-screen bg-[#f4f6fa] text-[#1b2a4a]">
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#0f2647] via-[#123765] to-[#1a4a7a] pb-14 pt-11 text-white md:pb-16 md:pt-14">
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#0f2647] via-[#123765] to-[#1a4a7a] pb-14 pt-28 text-white md:pb-16 md:pt-32">
         <div
           className="pointer-events-none absolute inset-0 opacity-90"
           style={{ backgroundImage: heroPattern }}

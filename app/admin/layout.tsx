@@ -12,6 +12,8 @@ import {
   LogOut,
   Menu,
   X,
+  Award,
+  GraduationCap,
 } from "lucide-react"
 
 type DataAdmin = {
@@ -22,11 +24,13 @@ type DataAdmin = {
 }
 
 const menuAdmin = [
-  { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/berita", label: "Berita", icon: Newspaper },
-  { href: "/admin/role-user", label: "Role User", icon: ShieldUser },
-  { href: "/admin/blog", label: "Blog", icon: BookText },
-  { href: "/admin/jurnal", label: "Jurnal", icon: Library },
+  { href: "/admin", label: "Dashboard", icon: LayoutDashboard, group: "Umum" },
+  { href: "/admin/berita", label: "Berita", icon: Newspaper, group: "Konten" },
+  { href: "/admin/blog", label: "Blog", icon: BookText, group: "Konten" },
+  { href: "/admin/jurnal", label: "Jurnal", icon: Library, group: "Konten" },
+  { href: "/admin/pejabat", label: "Pejabat", icon: Award, group: "Profil" },
+  { href: "/admin/dosen", label: "Dosen", icon: GraduationCap, group: "Profil" },
+  { href: "/admin/role-user", label: "Role User", icon: ShieldUser, group: "Pengaturan" },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -37,7 +41,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [menuMobileBuka, setMenuMobileBuka] = useState(false)
 
   const judulHalaman = useMemo(() => {
-    const item = menuAdmin.find((menu) => menu.href === pathname)
+    const item = menuAdmin.find((menu) => pathname === menu.href || pathname.startsWith(menu.href + "/"))
     return item?.label ?? "Dashboard"
   }, [pathname])
 
@@ -240,14 +244,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </Link>
 
             <nav>
-              {menuAdmin.map((item) => {
-                const Icon = item.icon
-                const aktif = pathname === item.href
+              {["Umum", "Konten", "Profil", "Pengaturan"].map((group) => {
+                const items = menuAdmin.filter((m) => m.group === group)
                 return (
-                  <Link key={item.href} href={item.href} className={`admin-menu-link ${aktif ? "active" : ""}`}>
-                    <Icon className="h-4 w-4" />
-                    {item.label}
-                  </Link>
+                  <div key={group} className="mb-3">
+                    <div className="mb-1 px-2 text-[10px] font-bold uppercase tracking-wider text-white/30">{group}</div>
+                    {items.map((item) => {
+                      const Icon = item.icon
+                      const aktif = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href + "/"))
+                      return (
+                        <Link key={item.href} href={item.href} className={`admin-menu-link ${aktif ? "active" : ""}`}>
+                          <Icon className="h-4 w-4" />
+                          {item.label}
+                        </Link>
+                      )
+                    })}
+                  </div>
                 )
               })}
             </nav>
@@ -294,19 +306,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <div className="admin-mobile-card" onClick={(event) => event.stopPropagation()}>
               <div className="mb-3 text-xs uppercase tracking-widest text-[#e8c97a]">Menu Admin</div>
               <nav>
-                {menuAdmin.map((item) => {
-                  const Icon = item.icon
-                  const aktif = pathname === item.href
+                {["Umum", "Konten", "Profil", "Pengaturan"].map((group) => {
+                  const items = menuAdmin.filter((m) => m.group === group)
                   return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={`admin-menu-link ${aktif ? "active" : ""}`}
-                      onClick={() => setMenuMobileBuka(false)}
-                    >
-                      <Icon className="h-4 w-4" />
-                      {item.label}
-                    </Link>
+                    <div key={group} className="mb-3">
+                      <div className="mb-1 px-2 text-[10px] font-bold uppercase tracking-wider text-white/30">{group}</div>
+                      {items.map((item) => {
+                        const Icon = item.icon
+                        const aktif = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href + "/"))
+                        return (
+                          <Link key={item.href} href={item.href} className={`admin-menu-link ${aktif ? "active" : ""}`} onClick={() => setMenuMobileBuka(false)}>
+                            <Icon className="h-4 w-4" />
+                            {item.label}
+                          </Link>
+                        )
+                      })}
+                    </div>
                   )
                 })}
               </nav>

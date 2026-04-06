@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ExternalLink, Filter, FileText, Send, ArrowLeft, Calendar } from "lucide-react"
+import { Filter, FileText, Send, ArrowLeft, Calendar } from "lucide-react"
 import Link from "next/link"
 
 import { SiteFilterCombobox } from "@/components/site-filter-combobox"
@@ -89,7 +89,7 @@ export default function JournalPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="mx-auto max-w-4xl px-4 py-12">
+      <div className="mx-auto max-w-4xl px-4 pb-12 pt-24">
         {/* Header */}
         <div className="mb-12 text-center">
           <Link 
@@ -207,13 +207,13 @@ export default function JournalPage() {
                     </Link>
                     
                     <a
-                      href={`https://doi.org/${journal.doi}`}
+                      href="/pdfs/pratinjau-jurnal.pdf"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 rounded-lg border border-gold px-4 py-2 text-sm font-medium text-navy transition-all hover:bg-gold hover:text-primary-foreground"
                     >
-                      <ExternalLink className="h-3.5 w-3.5" />
-                      DOI
+                      <FileText className="h-3.5 w-3.5" />
+                      Preview PDF
                     </a>
                   </div>
                 </div>

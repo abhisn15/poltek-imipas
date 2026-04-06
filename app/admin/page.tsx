@@ -90,7 +90,7 @@ export default function DashboardAdminPage() {
       warna: "from-[#0f2647] to-[#1b3a6b]",
     },
     {
-      label: "Berita Penting",
+      label: "Pengumuman Penting",
       nilai: data.totalPenting,
       icon: Star,
       warna: "from-[#7f611d] to-[#c9a84c]",
