@@ -621,7 +621,7 @@ export default function AdminBeritaPage() {
             <form
               id="form-berita"
               onSubmit={submitBerita}
-              className="flex w-full overflow-hidden"
+              className="flex w-full overflow-auto lg:overflow-hidden flex-col lg:flex-row"
             >
               {/* Left: Konten utama */}
               <div className="flex-1 overflow-y-auto px-6 py-5 space-y-5 min-w-0">
@@ -677,7 +677,7 @@ export default function AdminBeritaPage() {
               </div>
 
               {/* Right: Sidebar pengaturan */}
-              <div className="w-[300px] shrink-0 overflow-y-auto border-l border-[#e5ebf3] bg-[#f8fbff] px-5 py-5 space-y-5">
+              <div className="w-full lg:w-[300px] lg:shrink-0 overflow-y-auto border-t border-[#e5ebf3] lg:border-t-0 lg:border-l bg-[#f8fbff] px-5 py-5 space-y-5">
 
                 {/* Status & Tanggal */}
                 <div className="rounded-xl border border-[#e5ebf3] bg-white p-4 space-y-4">
@@ -841,7 +841,7 @@ export default function AdminBeritaPage() {
           </div>
 
           {/* ── Footer sticky ── */}
-          <div className="shrink-0 flex items-center justify-between border-t border-[#e5ebf3] bg-white px-6 py-3.5">
+          <div className="shrink-0 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-t border-[#e5ebf3] bg-white px-6 py-3.5">
             <p className="text-xs text-[#8a97aa]">
               <span className="text-red-400">*</span> Field wajib diisi
             </p>

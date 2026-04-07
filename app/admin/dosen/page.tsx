@@ -372,8 +372,8 @@ export default function AdminDosenPage() {
 
                 <div className="sm:col-span-2">
                   <span className="mb-1.5 block text-xs font-semibold text-[#1b2a4a]">Foto (URL atau upload)</span>
-                  <div className="flex gap-2">
-                    <input value={form.fotoUrl} onChange={(e) => setForm((p) => ({ ...p, fotoUrl: e.target.value }))} className={kelasInput} placeholder="https://... atau upload" />
+                  <div className="flex flex-col gap-2 sm:flex-row">
+                    <input value={form.fotoUrl} onChange={(e) => setForm((p) => ({ ...p, fotoUrl: e.target.value }))} className={`${kelasInput} min-w-0 flex-1`} placeholder="https://... atau upload" />
                     <label className="inline-flex h-10 shrink-0 cursor-pointer items-center gap-1.5 rounded-xl border border-[#d6dde6] bg-white px-3 text-xs font-medium hover:bg-[#f8fbff]">
                       {mengunggah ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Upload className="h-3.5 w-3.5" />}
                       Upload

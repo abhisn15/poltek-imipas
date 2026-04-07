@@ -378,6 +378,7 @@ export default function BlogPage() {
         /* Pagination */
         .pagination {
           display: flex;
+          flex-wrap: wrap;
           justify-content: center;
           align-items: center;
           gap: 8px;
@@ -451,10 +452,10 @@ export default function BlogPage() {
               <span className="inline-block px-3 py-1 bg-white/20 rounded-full text-sm font-medium mb-4">
                 Tulisan Editorial
               </span>
-              <h1 className="text-4xl md:text-5xl font-bold mb-6" style={{ fontFamily: "Plus Jakarta Sans, sans-serif" }}>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6" style={{ fontFamily: "Plus Jakarta Sans, sans-serif" }}>
                 Blog POLTEKIMIPAS
               </h1>
-              <p className="text-xl text-white/90 max-w-3xl mx-auto leading-relaxed">
+              <p className="text-base sm:text-xl text-white/90 max-w-3xl mx-auto leading-relaxed">
                 Tulisan editorial dan opini dari para dosen, staf, dan civitas akademika POLTEKIMIPAS.
               </p>
             </div>
@@ -516,9 +517,9 @@ export default function BlogPage() {
             {currentPosts.length > 0 ? (
               <div className="grid gap-8 md:grid-cols-2">
                 {currentPosts.map((post) => (
-                  <article key={post.id} className="bg-white rounded-xl border border-gray-200 p-8 transition-all duration-300 hover:shadow-lg hover:border-blue-200">
+                  <article key={post.id} className="bg-white rounded-xl border border-gray-200 p-5 sm:p-8 transition-all duration-300 hover:shadow-lg hover:border-blue-200">
                     {/* Header */}
-                    <div className="flex items-start justify-between mb-6">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between mb-6">
                       <div>
                         <div className="flex items-center gap-3 mb-3">
                           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-blue-700 text-white font-bold text-lg">
@@ -557,14 +558,14 @@ export default function BlogPage() {
 
                     {/* Title */}
                     <h2
-                      className="text-2xl font-bold text-gray-900 mb-4 leading-tight"
+                      className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 leading-tight"
                       style={{ fontFamily: "Plus Jakarta Sans, sans-serif" }}
                     >
                       {post.title}
                     </h2>
 
                     {/* Excerpt */}
-                    <p className="text-gray-600 leading-relaxed mb-6 text-lg">
+                    <p className="text-gray-600 leading-relaxed mb-6 text-base sm:text-lg">
                       {post.excerpt}
                     </p>
 

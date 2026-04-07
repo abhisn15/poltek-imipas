@@ -49,7 +49,7 @@ function CountUp({ target, suffix = "", icon }: { target: number; suffix?: strin
           </div>
         </div>
       )}
-      <div className="text-3xl font-bold text-gold md:text-4xl" style={{ fontFamily: "var(--font-poppins)" }}>
+      <div className="text-2xl font-bold text-gold sm:text-3xl md:text-4xl" style={{ fontFamily: "var(--font-poppins)" }}>
         {count.toLocaleString()}
         {suffix}
       </div>
@@ -107,7 +107,7 @@ export default function Hero() {
         </div>
 
         {/* Stats */}
-        <div className="mx-auto mt-16 grid max-w-3xl grid-cols-3 gap-8">
+        <div className="mx-auto mt-16 grid max-w-3xl grid-cols-3 gap-4 sm:gap-8">
           <div className="text-center">
             <CountUp 
               target={1727} 

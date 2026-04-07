@@ -89,14 +89,14 @@ export default function DetailDosenPage() {
 
         <section className="mb-8 overflow-hidden rounded-2xl border border-[#dbe4f0] bg-white shadow-lg">
           <div className="grid lg:grid-cols-[320px_1fr]">
-            <div className="bg-[#f8fbff]">
+            <div className="bg-[#f8fbff] aspect-[4/3] max-h-[320px] lg:max-h-none lg:aspect-auto overflow-hidden">
               {dosen.fotoUrl
                 ? <img src={dosen.fotoUrl} alt={dosen.nama} className="h-full w-full object-cover" />
                 : <AvatarDosen nama={dosen.nama} />
               }
             </div>
 
-            <div className="p-7">
+            <div className="p-5 sm:p-7">
               <p className="mb-2 inline-flex items-center gap-2 rounded-full border border-gold/35 bg-gold/10 px-3 py-1 text-xs font-semibold tracking-wider text-gold uppercase">
                 <BookOpen className="h-3.5 w-3.5" />
                 Profil Dosen
@@ -109,15 +109,15 @@ export default function DetailDosenPage() {
 
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
                 {dosen.email && (
-                  <div className="flex items-center gap-2 rounded-lg border border-border bg-[#fafcff] px-3 py-2 text-sm text-muted-foreground">
-                    <Mail className="h-4 w-4 text-navy" />
-                    {dosen.email}
+                  <div className="flex items-center gap-2 rounded-lg border border-border bg-[#fafcff] px-3 py-2 text-sm text-muted-foreground min-w-0">
+                    <Mail className="h-4 w-4 text-navy shrink-0" />
+                    <span className="break-all min-w-0">{dosen.email}</span>
                   </div>
                 )}
                 {dosen.ruang && (
-                  <div className="flex items-center gap-2 rounded-lg border border-border bg-[#fafcff] px-3 py-2 text-sm text-muted-foreground">
-                    <MapPin className="h-4 w-4 text-navy" />
-                    {dosen.ruang}
+                  <div className="flex items-center gap-2 rounded-lg border border-border bg-[#fafcff] px-3 py-2 text-sm text-muted-foreground min-w-0">
+                    <MapPin className="h-4 w-4 text-navy shrink-0" />
+                    <span className="break-words min-w-0">{dosen.ruang}</span>
                   </div>
                 )}
               </div>

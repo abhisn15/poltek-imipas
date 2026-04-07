@@ -101,7 +101,7 @@ export default function JournalPage() {
           </Link>
           
           <h1 
-            className="text-4xl font-bold text-navy mb-4"
+            className="text-3xl sm:text-4xl font-bold text-navy mb-4"
             style={{ fontFamily: "var(--font-poppins)" }}
           >
             Jurnal Ilmiah POLTEKIMIPAS
@@ -185,7 +185,7 @@ export default function JournalPage() {
                   {journal.abstract}
                 </p>
 
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex flex-wrap gap-1.5">
                     {journal.keywords.slice(0, 3).map((keyword) => (
                       <span
@@ -197,7 +197,7 @@ export default function JournalPage() {
                     ))}
                   </div>
 
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     <Link
                       href={`/jurnal/${journal.slug}`}
                       className="inline-flex items-center gap-1.5 rounded-lg border border-navy px-4 py-2 text-sm font-medium text-navy transition-all hover:bg-navy hover:text-primary-foreground"

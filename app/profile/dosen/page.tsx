@@ -88,9 +88,9 @@ export default function ProfilDosenPage() {
                   <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">{dosen.deskripsi}</p>
 
                   {dosen.email && (
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Mail className="h-3.5 w-3.5 text-navy" />
-                      {dosen.email}
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground min-w-0">
+                      <Mail className="h-3.5 w-3.5 text-navy shrink-0" />
+                      <span className="break-all min-w-0">{dosen.email}</span>
                     </div>
                   )}
 
