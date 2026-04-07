@@ -494,7 +494,7 @@ export default function BlogDetailPage({ params }: { params: Promise<{ slug: str
 
       <div className="blog-detail-root">
         {/* Top spacing for fixed navbar */}
-        <div style={{ height: "80px" }} />
+        <div style={{ height: "104px" }} />
 
         <div className="mx-auto max-w-7xl px-4 py-10">
 

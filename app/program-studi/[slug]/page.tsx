@@ -764,7 +764,7 @@ export default function ProgramDetailPage() {
         <div className="reading-progress" style={{ width: `${scrollProgress}%` }} />
 
         {/* Hero Section */}
-        <section className="program-hero py-20">
+        <section className="program-hero pb-20 pt-28 md:pt-32">
           <div className="program-hero-content max-w-7xl mx-auto px-4">
             <Link href="/program-studi" className="back-button">
               <ArrowLeft className="h-4 w-4" />

@@ -49,7 +49,7 @@ export default async function BeritaDetailPage({ params }: HalamanDetailProps) {
 
   return (
     <div className="min-h-screen bg-[#f7f9fc] text-[#1b2a4a]">
-      <section className="bg-gradient-to-br from-[#123765] to-[#1f4776] py-12 text-white">
+      <section className="bg-gradient-to-br from-[#123765] to-[#1f4776] pb-12 pt-28 text-white">
         <div className="mx-auto max-w-5xl px-4">
           <Link href="/berita" className="mb-6 inline-flex items-center gap-2 text-sm text-white/85 hover:text-white">
             <ArrowLeft className="h-4 w-4" />

@@ -128,7 +128,7 @@ export default function JournalDetailPage({ params }: { params: Promise<{ slug: 
 
   return (
     <div className="min-h-screen bg-background">
-      <article className="mx-auto max-w-4xl px-4 py-12">
+      <article className="mx-auto max-w-4xl px-4 pb-12 pt-28">
         {/* Navigation */}
         <div className="mb-8">
           <Link 
