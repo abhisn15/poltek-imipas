@@ -17,14 +17,20 @@ const poppins = Poppins({
 })
 
 export const metadata: Metadata = {
-  title: "POLTEKIMIPAS - Politeknik Ilmu Pemasyarakatan",
+  title: "POLTEKIMIPAS - Politeknik Imigrasi dan Pemasyarakatan",
   description:
-    "Politeknik Ilmu Pemasyarakatan (POLTEKIMIPAS) - Perguruan Tinggi Vokasi di bawah Kementerian Imigrasi dan Pemasyarakatan RI. Cerdas, Berintegritas, Berdedikasi.",
+    "Politeknik Imigrasi dan Pemasyarakatan (Poltekimipas) merupakan perguruan tinggi kedinasan di bawah Kementerian Hukum dan Hak Asasi Manusia Republik Indonesia yang menyelenggarakan pendidikan vokasi di bidang keimigrasian dan pemasyarakatan. Poltekimipas hadir sebagai hasil integrasi dari Politeknik Imigrasi (Poltekim) dan Politeknik Ilmu Pemasyarakatan (Poltekip), dengan tujuan mencetak sumber daya manusia yang profesional, berintegritas, dan kompeten dalam mendukung pelaksanaan tugas keimigrasian serta sistem pemasyarakatan di Indonesia. Melalui kurikulum berbasis praktik, disiplin tinggi, serta pembinaan karakter, Poltekimipas berkomitmen menghasilkan lulusan yang siap mengabdi kepada negara, menjunjung tinggi hukum, serta memberikan pelayanan publik yang prima.",
   keywords: [
     "POLTEKIMIPAS",
-    "Politeknik Ilmu Pemasyarakatan",
-    "Kemenimipas",
-    "Perguruan Tinggi",
+    "Politeknik Imigrasi dan Pemasyarakatan",
+    "Politeknik Imigrasi",
+    "Politeknik Pemasyarakatan",
+    "Poltekim",
+    "Poltekip",
+    "Kementerian Hukum dan HAM",
+    "Perguruan Tinggi Kedinasan",
+    "Pendidikan Vokasi",
+    "Imigrasi",
     "Pemasyarakatan",
   ],
 }
