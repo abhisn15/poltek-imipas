@@ -167,7 +167,7 @@ export default function ProfilPejabatPage() {
               <section>
                 <div className="flex items-center gap-3 mb-5">
                   <div className="h-px flex-1 bg-gradient-to-r from-[#1b3a6b]/30 to-transparent" />
-                  <span className="text-xs font-bold uppercase tracking-widest text-[#1b3a6b]">Wakil Rektor & Direktur</span>
+                  <span className="text-xs font-bold uppercase tracking-widest text-[#1b3a6b]">Struktur Organisasi Poltekimipas</span>
                   <div className="h-px flex-1 bg-gradient-to-l from-[#1b3a6b]/30 to-transparent" />
                 </div>
                 <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
