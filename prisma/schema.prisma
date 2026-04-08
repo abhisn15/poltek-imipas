@@ -128,3 +128,14 @@ model Dosen {
   @@index([urutan], map: "idx_dosen_urutan")
   @@map("dosen")
 }
+
+model StatistikBeranda {
+  idStatistik     Int      @id @default(1) @map("id_statistik") @db.UnsignedInt
+  totalTaruna     Int      @default(1735) @map("total_taruna") @db.UnsignedInt
+  totalAlumni     Int      @default(15000) @map("total_alumni") @db.UnsignedInt
+  tahunPengabdian Int      @default(64) @map("tahun_pengabdian") @db.UnsignedInt
+  dibuatPada      DateTime @default(now()) @map("dibuat_pada") @db.Timestamp(0)
+  diubahPada      DateTime @updatedAt @map("diubah_pada") @db.Timestamp(0)
+
+  @@map("statistik_beranda")
+}

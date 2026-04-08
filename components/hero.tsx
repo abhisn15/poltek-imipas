@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react"
 import { ChevronDown, Users, Award, Clock } from "lucide-react"
 
-function CountUp({ target, suffix = "", icon }: { target: number; suffix?: string; icon?: React.ReactNode }) {
+function CountUp({ target, icon }: { target: number; icon?: React.ReactNode }) {
   const [count, setCount] = useState(0)
   const ref = useRef<HTMLDivElement>(null)
   const hasAnimated = useRef(false)
@@ -11,6 +11,11 @@ function CountUp({ target, suffix = "", icon }: { target: number; suffix?: strin
   useEffect(() => {
     const el = ref.current
     if (!el) return
+
+    if (hasAnimated.current) {
+      setCount(target)
+      return
+    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -51,13 +56,37 @@ function CountUp({ target, suffix = "", icon }: { target: number; suffix?: strin
       )}
       <div className="text-2xl font-bold text-gold sm:text-3xl md:text-4xl" style={{ fontFamily: "var(--font-poppins)" }}>
         {count.toLocaleString()}
-        {suffix}
       </div>
     </div>
   )
 }
 
 export default function Hero() {
+  const [statistik, setStatistik] = useState({
+    totalTaruna: 1735,
+    totalAlumni: 15000,
+    tahunPengabdian: 64,
+  })
+
+  useEffect(() => {
+    let aktif = true
+    fetch("/api/publik/statistik-beranda", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((payload) => {
+        if (!aktif || !payload?.data) return
+        setStatistik({
+          totalTaruna: Number(payload.data.totalTaruna) || 0,
+          totalAlumni: Number(payload.data.totalAlumni) || 0,
+          tahunPengabdian: Number(payload.data.tahunPengabdian) || 0,
+        })
+      })
+      .catch(() => {
+        // Tetap gunakan nilai fallback bila API gagal.
+      })
+    return () => {
+      aktif = false
+    }
+  }, [])
 
   return (
     <section id="beranda" className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -110,8 +139,7 @@ export default function Hero() {
         <div className="mx-auto mt-16 grid max-w-3xl grid-cols-3 gap-4 sm:gap-8">
           <div className="text-center">
             <CountUp 
-              target={1727} 
-              suffix="+" 
+              target={statistik.totalTaruna}
               icon={<Users className="h-6 w-6" />}
             />
             <div className="mt-1 text-xs text-primary-foreground/50 uppercase tracking-wider">
@@ -121,8 +149,7 @@ export default function Hero() {
           
           <div className="text-center">
             <CountUp 
-              target={15000} 
-              suffix="+" 
+              target={statistik.totalAlumni}
               icon={<Award className="h-6 w-6" />}
             />
             <div className="mt-1 text-xs text-primary-foreground/50 uppercase tracking-wider">
@@ -132,8 +159,7 @@ export default function Hero() {
           
           <div className="text-center">
             <CountUp 
-              target={64} 
-              suffix="+" 
+              target={statistik.tahunPengabdian}
               icon={<Clock className="h-6 w-6" />}
             />
             <div className="mt-1 text-xs text-primary-foreground/50 uppercase tracking-wider">

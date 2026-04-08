@@ -11,9 +11,9 @@ type Milestone = {
 
 const milestones: Milestone[] = [
   { year: "1962", singkatan: "AIM", nama: "Akademi Imigrasi", sisi: "kiri" },
-  { year: "1964", singkatan: "AKIP", nama: "Akademi Pemasyarakatan", sisi: "kanan" },
+  { year: "1964", singkatan: "AKIP", nama: "Akademi Ilmu Pemasyarakatan", sisi: "kanan" },
   { year: "2016", singkatan: "Poltekim", nama: "Politeknik Imigrasi", sisi: "kiri" },
-  { year: "2018", singkatan: "Poltekip", nama: "Politeknik Pemasyarakatan", sisi: "kanan" },
+  { year: "2018", singkatan: "Poltekip", nama: "Politeknik Ilmu Pemasyarakatan", sisi: "kanan" },
   { year: "2023", singkatan: "Poltekpin", nama: "Politeknik Imigrasi dan Pemasyarakatan", sisi: "kiri" },
   { year: "2026", singkatan: "Poltekimipas", nama: "Politeknik Imigrasi dan Pemasyarakatan", sisi: "kanan" },
 ]

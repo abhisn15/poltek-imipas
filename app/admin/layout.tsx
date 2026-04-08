@@ -14,6 +14,7 @@ import {
   X,
   Award,
   GraduationCap,
+  ChartNoAxesColumn,
 } from "lucide-react"
 
 type DataAdmin = {
@@ -30,6 +31,7 @@ const menuAdmin = [
   { href: "/admin/jurnal", label: "Jurnal", icon: Library, group: "Konten" },
   { href: "/admin/pejabat", label: "Pejabat", icon: Award, group: "Profil" },
   { href: "/admin/dosen", label: "Dosen", icon: GraduationCap, group: "Profil" },
+  { href: "/admin/statistik-beranda", label: "Statistik Beranda", icon: ChartNoAxesColumn, group: "Pengaturan" },
   { href: "/admin/role-user", label: "Role User", icon: ShieldUser, group: "Pengaturan" },
 ]
 
