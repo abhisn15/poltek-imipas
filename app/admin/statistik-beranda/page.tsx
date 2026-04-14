@@ -11,6 +11,7 @@ type FormStatistik = {
   totalTaruna: string
   totalAlumni: string
   tahunPengabdian: string
+  totalPengunjung: string
 }
 
 export default function AdminStatistikBerandaPage() {
@@ -23,6 +24,7 @@ export default function AdminStatistikBerandaPage() {
     totalTaruna: "",
     totalAlumni: "",
     tahunPengabdian: "",
+    totalPengunjung: "",
   })
 
   useEffect(() => {
@@ -46,6 +48,7 @@ export default function AdminStatistikBerandaPage() {
           totalTaruna: String(dataPayload?.data?.totalTaruna ?? ""),
           totalAlumni: String(dataPayload?.data?.totalAlumni ?? ""),
           tahunPengabdian: String(dataPayload?.data?.tahunPengabdian ?? ""),
+          totalPengunjung: String(dataPayload?.data?.totalPengunjung ?? ""),
         })
       } catch (err) {
         if (!aktif) return
@@ -75,6 +78,7 @@ export default function AdminStatistikBerandaPage() {
           totalTaruna: Number(form.totalTaruna),
           totalAlumni: Number(form.totalAlumni),
           tahunPengabdian: Number(form.tahunPengabdian),
+          totalPengunjung: Number(form.totalPengunjung),
         }),
       })
 
@@ -89,6 +93,7 @@ export default function AdminStatistikBerandaPage() {
           totalTaruna: String(payload.data.totalTaruna ?? ""),
           totalAlumni: String(payload.data.totalAlumni ?? ""),
           tahunPengabdian: String(payload.data.tahunPengabdian ?? ""),
+          totalPengunjung: String(payload.data.totalPengunjung ?? ""),
         })
       }
     } catch (err) {
@@ -127,7 +132,7 @@ export default function AdminStatistikBerandaPage() {
       {error && <div className="mt-4 rounded-xl border border-[#f1c7c7] bg-[#fff4f4] px-4 py-2.5 text-sm text-[#b42318]">{error}</div>}
       {sukses && <div className="mt-4 rounded-xl border border-[#b7e1c5] bg-[#effbf2] px-4 py-2.5 text-sm text-[#157347]">{sukses}</div>}
 
-      <form onSubmit={simpan} className="mt-5 grid gap-4 sm:grid-cols-3">
+      <form onSubmit={simpan} className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <label className="space-y-1.5">
           <span className="block text-xs font-semibold text-[#1b2a4a]">Total Taruna</span>
           <input
@@ -164,7 +169,19 @@ export default function AdminStatistikBerandaPage() {
           />
         </label>
 
-        <div className="sm:col-span-3">
+        <label className="space-y-1.5">
+          <span className="block text-xs font-semibold text-[#1b2a4a]">Total Pengunjung</span>
+          <input
+            type="number"
+            min={0}
+            value={form.totalPengunjung}
+            onChange={(e) => setForm((lama) => ({ ...lama, totalPengunjung: e.target.value }))}
+            className="h-10 w-full rounded-xl border border-[#d6dde6] bg-white px-3 text-sm text-[#1b2a4a] outline-none focus:border-[#1b3a6b] focus:ring-2 focus:ring-[#1b3a6b]/10"
+            required
+          />
+        </label>
+
+        <div className="sm:col-span-2 lg:col-span-4">
           <button
             type="submit"
             disabled={menyimpan}

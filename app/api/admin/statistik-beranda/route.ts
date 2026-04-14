@@ -41,6 +41,7 @@ export async function PATCH(request: NextRequest) {
       totalTaruna: body?.totalTaruna,
       totalAlumni: body?.totalAlumni,
       tahunPengabdian: body?.tahunPengabdian,
+      totalPengunjung: body?.totalPengunjung,
     })
 
     return NextResponse.json(

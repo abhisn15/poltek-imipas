@@ -134,6 +134,7 @@ model StatistikBeranda {
   totalTaruna     Int      @default(1735) @map("total_taruna") @db.UnsignedInt
   totalAlumni     Int      @default(15000) @map("total_alumni") @db.UnsignedInt
   tahunPengabdian Int      @default(64) @map("tahun_pengabdian") @db.UnsignedInt
+  totalPengunjung Int      @default(0) @map("total_pengunjung") @db.UnsignedInt
   dibuatPada      DateTime @default(now()) @map("dibuat_pada") @db.Timestamp(0)
   diubahPada      DateTime @updatedAt @map("diubah_pada") @db.Timestamp(0)
 

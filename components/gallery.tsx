@@ -82,6 +82,15 @@ function GambarCard({ item, onClick }: { item: GalleryItem; onClick: () => void 
 export default function Gallery() {
   const [lightbox, setLightbox] = useState<number | null>(null)
   const [filter, setFilter] = useState("Semua")
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    // Simulasi loading data dari server
+    const timer = setTimeout(() => {
+      setIsLoading(false)
+    }, 1500)
+    return () => clearTimeout(timer)
+  }, [])
 
   const filtered = filter === "Semua" ? images : images.filter((i) => i.kategori === filter)
 
@@ -181,7 +190,22 @@ export default function Gallery() {
         </div>
 
         {/* Masonry grid — responsif */}
-        {filtered.length === 0 ? (
+        {isLoading ? (
+          <div
+            className="grid gap-4"
+            style={{
+              gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 280px), 1fr))",
+              gridAutoRows: "200px",
+            }}
+          >
+            {[...Array(6)].map((_, i) => (
+              <div
+                key={i}
+                className={`animate-pulse rounded-2xl bg-[#e2e8f0] ${i === 0 || i === 3 ? "row-span-2" : ""}`}
+              />
+            ))}
+          </div>
+        ) : filtered.length === 0 ? (
           <div className="py-20 text-center text-[#8a97aa]">Tidak ada foto dalam kategori ini.</div>
         ) : (
           <div
@@ -207,7 +231,7 @@ export default function Gallery() {
       {/* Lightbox */}
       {lightbox !== null && (
         <div
-          className="fixed inset-0 z-[100] flex flex-col bg-black/95 backdrop-blur-2xl transition-all"
+          className="fixed inset-0 z-[9999] flex flex-col bg-black/80 backdrop-blur-sm transition-all"
           onClick={tutupLightbox}
         >
           {/* Top Bar */}

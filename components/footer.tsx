@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { MapPin, Phone, Mail, Instagram, Facebook, Youtube, Twitter } from "lucide-react"
+import { MapPin, Phone, Mail, Instagram, Facebook, Youtube, Twitter, Users } from "lucide-react"
 
 const sitemapLinks = [
   { label: "Beranda", href: "/" },
@@ -26,9 +26,20 @@ const socialLinks = [
 
 export default function Footer() {
   const [year, setYear] = useState<number | null>(null)
+  const [totalPengunjung, setTotalPengunjung] = useState<number | null>(null)
 
   useEffect(() => {
     setYear(new Date().getFullYear())
+    
+    // Ambil data statistik untuk total pengunjung
+    fetch(`/api/publik/statistik-beranda?t=${Date.now()}`, { cache: "no-store" })
+      .then(res => res.json())
+      .then(payload => {
+        if (payload?.data && typeof payload.data.totalPengunjung === 'number') {
+          setTotalPengunjung(payload.data.totalPengunjung)
+        }
+      })
+      .catch(err => console.error("Gagal memuat total pengunjung", err))
   }, [])
 
   return (
@@ -431,9 +442,18 @@ export default function Footer() {
             &copy; {year ?? ""} Politeknik Imigrasi Pemasyarakatan. Hak Cipta Dilindungi.
           </span>
           <div className="footer-bottom-right">
-            <span className="footer-bottom-text">Kementerian Imigrasi dan Pemasyarakatan</span>
-            <div className="footer-bottom-dot" />
-            <span className="footer-bottom-text">Republik Indonesia</span>
+            {totalPengunjung !== null && (
+              <>
+                <span className="footer-bottom-text flex items-center gap-1.5">
+                  <Users className="h-3 w-3 text-[#c9a34f]" />
+                  Total Pengunjung: <strong className="text-white/60">{totalPengunjung.toLocaleString()}</strong>
+                </span>
+                <div className="footer-bottom-dot hidden sm:block" />
+              </>
+            )}
+            <span className="footer-bottom-text hidden sm:block">Kementerian Imigrasi dan Pemasyarakatan</span>
+            <div className="footer-bottom-dot hidden sm:block" />
+            <span className="footer-bottom-text hidden sm:block">Republik Indonesia</span>
           </div>
         </div>
       </footer>
