@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { ArrowLeft, BookOpen, ChevronRight, Mail, Loader2 } from "lucide-react"
+import { ArrowLeft, BookOpen, ChevronRight, Mail } from "lucide-react"
 
 type DataDosen = {
   idDosen: number
@@ -61,10 +61,24 @@ export default function ProfilDosenPage() {
         </section>
 
         {memuat ? (
-          <div className="flex items-center justify-center gap-3 py-20 text-[#8a97aa]">
-            <Loader2 className="h-6 w-6 animate-spin text-[#1b3a6b]" />
-            <span>Memuat data dosen...</span>
-          </div>
+          <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, idx) => (
+              <article key={idx} className="overflow-hidden rounded-2xl border border-[#e1e7f0] bg-white shadow-sm">
+                <div className="h-52 animate-pulse bg-[#eef3fb]" />
+                <div className="space-y-3 p-5">
+                  <div className="h-6 w-3/4 animate-pulse rounded bg-[#e8edf6]" />
+                  <div className="h-4 w-1/2 animate-pulse rounded bg-[#eef2f8]" />
+                  <div className="h-10 w-full animate-pulse rounded bg-[#f2f5fb]" />
+                  <div className="h-3 w-2/3 animate-pulse rounded bg-[#eef2f8]" />
+                  <div className="flex gap-2">
+                    <div className="h-5 w-20 animate-pulse rounded-full bg-[#eef2f8]" />
+                    <div className="h-5 w-24 animate-pulse rounded-full bg-[#eef2f8]" />
+                  </div>
+                  <div className="h-9 w-36 animate-pulse rounded-lg bg-[#eef2f8]" />
+                </div>
+              </article>
+            ))}
+          </section>
         ) : error ? (
           <div className="rounded-2xl border border-[#f1c7c7] bg-[#fff4f4] px-6 py-10 text-center text-sm text-[#b42318]">{error}</div>
         ) : daftar.length === 0 ? (

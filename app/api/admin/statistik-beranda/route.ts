@@ -12,7 +12,14 @@ export async function GET(request: NextRequest) {
     }
 
     const data = await ambilStatistikBeranda()
-    return NextResponse.json({ data })
+    return NextResponse.json(
+      { data },
+      {
+        headers: {
+          "Cache-Control": "no-store, max-age=0",
+        },
+      },
+    )
   } catch (error) {
     console.error("Gagal mengambil statistik beranda:", error)
     return NextResponse.json({ message: "Terjadi kesalahan pada server." }, { status: 500 })
@@ -36,7 +43,14 @@ export async function PATCH(request: NextRequest) {
       tahunPengabdian: body?.tahunPengabdian,
     })
 
-    return NextResponse.json({ message: "Statistik beranda berhasil diperbarui.", data })
+    return NextResponse.json(
+      { message: "Statistik beranda berhasil diperbarui.", data },
+      {
+        headers: {
+          "Cache-Control": "no-store, max-age=0",
+        },
+      },
+    )
   } catch (error) {
     console.error("Gagal memperbarui statistik beranda:", error)
     return NextResponse.json({ message: "Terjadi kesalahan pada server." }, { status: 500 })

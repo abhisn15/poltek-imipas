@@ -13,7 +13,6 @@ import Blog from "@/components/blog"
 import Journal from "@/components/journal"
 import Library from "@/components/library"
 import Announcements from "@/components/announcements"
-import Footer from "@/components/footer"
 import CookieBanner from "@/components/cookie-banner"
 import BackToTop from "@/components/back-to-top"
 
@@ -72,7 +71,6 @@ export default function Home() {
         <Journal />
         <Library />
         <Programs />
-        <Footer />
         <CookieBanner />
         <BackToTop />
       </main>

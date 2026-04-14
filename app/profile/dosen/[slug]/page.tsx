@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
-import { ArrowLeft, BookOpen, Calendar, FileText, Mail, MapPin, Loader2 } from "lucide-react"
+import { ArrowLeft, BookOpen, Calendar, FileText, Mail, MapPin } from "lucide-react"
 
 type JurnalItem = {
   id: number
@@ -60,8 +60,45 @@ export default function DetailDosenPage() {
 
   if (memuat) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-cream pt-24">
-        <Loader2 className="h-8 w-8 animate-spin text-[#1b3a6b]" />
+      <main className="min-h-screen bg-cream pb-16 pt-24">
+        <div className="mx-auto max-w-6xl px-4">
+          <div className="mb-6 h-9 w-44 animate-pulse rounded-lg bg-[#e8edf6]" />
+
+          <section className="mb-8 overflow-hidden rounded-2xl border border-[#dbe4f0] bg-white shadow-lg">
+            <div className="grid lg:grid-cols-[320px_1fr]">
+              <div className="aspect-[4/3] max-h-[320px] animate-pulse bg-[#eef3fb] lg:max-h-none lg:aspect-auto" />
+              <div className="space-y-4 p-5 sm:p-7">
+                <div className="h-6 w-28 animate-pulse rounded-full bg-[#eef2f8]" />
+                <div className="h-8 w-3/4 animate-pulse rounded bg-[#e8edf6]" />
+                <div className="h-4 w-1/3 animate-pulse rounded bg-[#eef2f8]" />
+                <div className="h-16 w-full animate-pulse rounded bg-[#f2f5fb]" />
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="h-10 animate-pulse rounded-lg bg-[#f2f5fb]" />
+                  <div className="h-10 animate-pulse rounded-lg bg-[#f2f5fb]" />
+                </div>
+                <div className="flex gap-2">
+                  <div className="h-6 w-20 animate-pulse rounded-full bg-[#eef2f8]" />
+                  <div className="h-6 w-24 animate-pulse rounded-full bg-[#eef2f8]" />
+                  <div className="h-6 w-16 animate-pulse rounded-full bg-[#eef2f8]" />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="rounded-2xl border border-[#dbe4f0] bg-white p-6 shadow-sm">
+            <div className="mb-5 h-7 w-64 animate-pulse rounded bg-[#e8edf6]" />
+            <div className="space-y-4">
+              {Array.from({ length: 2 }).map((_, idx) => (
+                <article key={idx} className="rounded-xl border border-border bg-[#fafcff] p-4">
+                  <div className="mb-2 h-4 w-40 animate-pulse rounded bg-[#eef2f8]" />
+                  <div className="mb-2 h-6 w-3/4 animate-pulse rounded bg-[#e8edf6]" />
+                  <div className="mb-3 h-10 w-full animate-pulse rounded bg-[#f2f5fb]" />
+                  <div className="h-9 w-28 animate-pulse rounded-lg bg-[#eef2f8]" />
+                </article>
+              ))}
+            </div>
+          </section>
+        </div>
       </main>
     )
   }

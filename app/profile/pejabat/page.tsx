@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { ArrowLeft, Building2, Mail, Phone, Award, Loader2 } from "lucide-react"
+import { ArrowLeft, Building2, Mail, Phone, Award } from "lucide-react"
 
 type DataPejabat = {
   idPejabat: number
@@ -136,10 +136,55 @@ export default function ProfilPejabatPage() {
         </section>
 
         {memuat ? (
-          <div className="flex items-center justify-center gap-3 py-20 text-[#8a97aa]">
-            <Loader2 className="h-6 w-6 animate-spin text-[#1b3a6b]" />
-            <span>Memuat data pejabat...</span>
-          </div>
+          <section className="space-y-10">
+            <div>
+              <div className="mb-5 flex items-center gap-3">
+                <div className="h-px flex-1 bg-gradient-to-r from-[#c9a34f]/40 to-transparent" />
+                <div className="h-4 w-36 animate-pulse rounded bg-[#e8edf6]" />
+                <div className="h-px flex-1 bg-gradient-to-l from-[#c9a34f]/40 to-transparent" />
+              </div>
+              <div className="mx-auto w-full max-w-sm overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white shadow-sm">
+                <div className="h-1 w-full bg-gradient-to-r from-[#c9a34f] via-[#e8c97a] to-[#c9a34f]" />
+                <div className="h-64 animate-pulse bg-[#eef3fb]" />
+                <div className="space-y-3 p-5">
+                  <div className="h-6 w-3/4 animate-pulse rounded bg-[#e8edf6]" />
+                  <div className="h-4 w-1/2 animate-pulse rounded bg-[#eef2f8]" />
+                  <div className="flex gap-2">
+                    <div className="h-5 w-24 animate-pulse rounded-full bg-[#eef2f8]" />
+                    <div className="h-5 w-28 animate-pulse rounded-full bg-[#eef2f8]" />
+                  </div>
+                  <div className="mt-4 space-y-2 border-t border-[#f0f4f9] pt-4">
+                    <div className="h-3 w-3/4 animate-pulse rounded bg-[#eef2f8]" />
+                    <div className="h-3 w-1/2 animate-pulse rounded bg-[#eef2f8]" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div className="mb-5 flex items-center gap-3">
+                <div className="h-px flex-1 bg-gradient-to-r from-[#1b3a6b]/30 to-transparent" />
+                <div className="h-4 w-56 animate-pulse rounded bg-[#e8edf6]" />
+                <div className="h-px flex-1 bg-gradient-to-l from-[#1b3a6b]/30 to-transparent" />
+              </div>
+              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {Array.from({ length: 3 }).map((_, idx) => (
+                  <div key={idx} className="overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white shadow-sm">
+                    <div className="h-1 w-full bg-gradient-to-r from-[#1b3a6b] to-[#2a5298]" />
+                    <div className="h-52 animate-pulse bg-[#eef3fb]" />
+                    <div className="space-y-3 p-5">
+                      <div className="h-5 w-2/3 animate-pulse rounded bg-[#e8edf6]" />
+                      <div className="h-4 w-1/2 animate-pulse rounded bg-[#eef2f8]" />
+                      <div className="flex gap-2">
+                        <div className="h-5 w-20 animate-pulse rounded-full bg-[#eef2f8]" />
+                        <div className="h-5 w-24 animate-pulse rounded-full bg-[#eef2f8]" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
         ) : error ? (
           <div className="rounded-2xl border border-[#f1c7c7] bg-[#fff4f4] px-6 py-10 text-center text-sm text-[#b42318]">{error}</div>
         ) : daftar.length === 0 ? (

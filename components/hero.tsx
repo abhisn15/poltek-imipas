@@ -67,10 +67,11 @@ export default function Hero() {
     totalAlumni: 15000,
     tahunPengabdian: 64,
   })
+  const [gagalMuatStatistik, setGagalMuatStatistik] = useState(false)
 
   useEffect(() => {
     let aktif = true
-    fetch("/api/publik/statistik-beranda", { cache: "no-store" })
+    fetch(`/api/publik/statistik-beranda?t=${Date.now()}`, { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
       .then((payload) => {
         if (!aktif || !payload?.data) return
@@ -79,9 +80,12 @@ export default function Hero() {
           totalAlumni: Number(payload.data.totalAlumni) || 0,
           tahunPengabdian: Number(payload.data.tahunPengabdian) || 0,
         })
+        setGagalMuatStatistik(false)
       })
       .catch(() => {
-        // Tetap gunakan nilai fallback bila API gagal.
+        if (aktif) {
+          setGagalMuatStatistik(true)
+        }
       })
     return () => {
       aktif = false
@@ -167,6 +171,11 @@ export default function Hero() {
             </div>
           </div>
         </div>
+        {gagalMuatStatistik && (
+          <p className="mt-4 text-xs text-gold/80">
+            Data statistik belum tersinkron. Coba muat ulang halaman.
+          </p>
+        )}
       </div>
 
       {/* Scroll indicator */}
