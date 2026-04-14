@@ -205,7 +205,7 @@ export default function Gallery() {
             {[...Array(6)].map((_, i) => (
               <div
                 key={i}
-                className={`animate-pulse rounded-2xl bg-[#e2e8f0] ${i === 0 || i === 3 ? "row-span-2" : ""}`}
+                className={`animate-pulse rounded-2xl bg-white/40 backdrop-blur-md border border-white/60 shadow-sm ${i === 0 || i === 3 ? "row-span-2" : ""}`}
               />
             ))}
           </div>
