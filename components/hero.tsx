@@ -5,37 +5,24 @@ import { ChevronDown, Users, Award, Clock } from "lucide-react"
 
 function CountUp({ target, icon }: { target: number; icon?: React.ReactNode }) {
   const [count, setCount] = useState(0)
+  const [animasiSiap, setAnimasiSiap] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
-  const hasAnimated = useRef(false)
+  const countRef = useRef(0)
+  const terlihat = useRef(false)
+  const frameRef = useRef<number | null>(null)
 
   useEffect(() => {
     const el = ref.current
     if (!el) return
 
-    if (hasAnimated.current) {
-      setCount(target)
-      return
-    }
-
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated.current) {
-          hasAnimated.current = true
-          
-          // Wait for splash screen to complete and user to see hero
+        if (entry.isIntersecting && !terlihat.current) {
+          terlihat.current = true
+          // Beri waktu splash selesai, lalu animasi siap mengikuti data terbaru.
           setTimeout(() => {
-            const duration = 3000 // 3 detik untuk animasi yang lebih cepat dan bagus
-            const startTime = performance.now()
-
-            const animate = (currentTime: number) => {
-              const elapsed = currentTime - startTime
-              const progress = Math.min(elapsed / duration, 1)
-              const eased = 1 - Math.pow(1 - progress, 3)
-              setCount(Math.floor(eased * target))
-              if (progress < 1) requestAnimationFrame(animate)
-            }
-            requestAnimationFrame(animate)
-          }, 4000) // 4 detik delay untuk splash + user melihat hero
+            setAnimasiSiap(true)
+          }, 4000)
         }
       },
       { threshold: 0.3 }
@@ -43,7 +30,51 @@ function CountUp({ target, icon }: { target: number; icon?: React.ReactNode }) {
 
     observer.observe(el)
     return () => observer.disconnect()
-  }, [target])
+  }, [])
+
+  useEffect(() => {
+    const nilaiTarget = Number.isFinite(target) ? Math.max(0, Math.floor(target)) : 0
+
+    if (!animasiSiap) {
+      return
+    }
+
+    const mulai = countRef.current
+    if (mulai === nilaiTarget) return
+
+    if (frameRef.current) {
+      cancelAnimationFrame(frameRef.current)
+      frameRef.current = null
+    }
+
+    const selisih = Math.abs(nilaiTarget - mulai)
+    const durasi = Math.min(1800, Math.max(500, selisih / 30))
+    const startTime = performance.now()
+
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime
+      const progress = Math.min(elapsed / durasi, 1)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      const nilai = Math.round(mulai + (nilaiTarget - mulai) * eased)
+      countRef.current = nilai
+      setCount(nilai)
+
+      if (progress < 1) {
+        frameRef.current = requestAnimationFrame(animate)
+      } else {
+        frameRef.current = null
+      }
+    }
+
+    frameRef.current = requestAnimationFrame(animate)
+
+    return () => {
+      if (frameRef.current) {
+        cancelAnimationFrame(frameRef.current)
+        frameRef.current = null
+      }
+    }
+  }, [target, animasiSiap])
 
   return (
     <div ref={ref} className="text-center">
