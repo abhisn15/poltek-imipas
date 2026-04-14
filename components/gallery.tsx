@@ -207,61 +207,68 @@ export default function Gallery() {
       {/* Lightbox */}
       {lightbox !== null && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md"
+          className="fixed inset-0 z-[100] flex flex-col bg-black/95 backdrop-blur-2xl transition-all"
           onClick={tutupLightbox}
         >
-          {/* Tombol tutup */}
-          <button
-            onClick={tutupLightbox}
-            className="absolute right-4 top-4 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white ring-1 ring-white/20 transition hover:bg-white/25 hover:ring-white/40"
-            aria-label="Tutup lightbox"
-          >
-            <X className="h-5 w-5" />
-          </button>
-
-          {/* Tombol Prev */}
-          {lightbox > 0 && (
+          {/* Top Bar */}
+          <div className="flex shrink-0 items-center justify-between p-4 sm:p-6 pb-2 pt-[max(1rem,env(safe-area-inset-top))]">
+            <div className="text-white/50 text-xs sm:text-sm font-bold tracking-widest uppercase">
+              {lightbox + 1} / {images.length}
+            </div>
             <button
-              className="absolute left-3 top-1/2 z-10 -translate-y-1/2 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white ring-1 ring-white/20 transition hover:bg-white/25 sm:left-5"
-              onClick={prevFoto}
-              aria-label="Foto sebelumnya"
+              onClick={tutupLightbox}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-md transition-all hover:bg-white/25 hover:scale-110"
+              aria-label="Tutup lightbox"
             >
-              <ChevronLeft className="h-6 w-6" />
+              <X className="h-5 w-5" />
             </button>
-          )}
+          </div>
 
-          {/* Gambar */}
-          <div
-            className="flex max-h-[82vh] max-w-[min(90vw,1100px)] items-center justify-center"
-            onClick={(e) => e.stopPropagation()}
-          >
+          {/* Main Image Area */}
+          <div className="relative flex min-h-0 flex-1 items-center justify-center px-2 sm:px-16">
+            {/* Tombol Prev */}
+            {lightbox > 0 && (
+              <button
+                className="absolute left-2 sm:left-6 z-50 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-md transition-all hover:bg-black/80 hover:scale-110 border border-white/10"
+                onClick={prevFoto}
+                aria-label="Foto sebelumnya"
+              >
+                <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
+              </button>
+            )}
+
             <img
               src={images[lightbox].src}
               alt={images[lightbox].title}
-              className="max-h-[82vh] max-w-full rounded-2xl object-contain shadow-2xl"
+              className="max-h-full max-w-full rounded-lg object-contain shadow-2xl ring-1 ring-white/5"
+              onClick={(e) => e.stopPropagation()}
             />
+
+            {/* Tombol Next */}
+            {lightbox < images.length - 1 && (
+              <button
+                className="absolute right-2 sm:right-6 z-50 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-md transition-all hover:bg-black/80 hover:scale-110 border border-white/10"
+                onClick={nextFoto}
+                aria-label="Foto berikutnya"
+              >
+                <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
+              </button>
+            )}
           </div>
 
-          {/* Tombol Next */}
-          {lightbox < images.length - 1 && (
-            <button
-              className="absolute right-3 top-1/2 z-10 -translate-y-1/2 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white ring-1 ring-white/20 transition hover:bg-white/25 sm:right-5"
-              onClick={nextFoto}
-              aria-label="Foto berikutnya"
-            >
-              <ChevronRight className="h-6 w-6" />
-            </button>
-          )}
-
-          {/* Caption bawah */}
-          <div className="absolute bottom-4 left-1/2 w-[min(90vw,500px)] -translate-x-1/2 rounded-2xl bg-black/60 px-5 py-3 text-center backdrop-blur-sm">
-            <div className="mb-1">
-              <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${warnaBadge[images[lightbox].kategori] ?? "bg-white/15 text-white/70"}`}>
+          {/* Bottom Caption */}
+          <div 
+            className="shrink-0 p-4 sm:p-6 pt-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] text-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mx-auto max-w-3xl">
+              <span className={`mb-3 inline-block rounded-full px-3 py-1 text-[10px] sm:text-[11px] font-bold tracking-wider uppercase ${warnaBadge[images[lightbox].kategori] ?? "bg-white/15 text-white/70"}`}>
                 {images[lightbox].kategori}
               </span>
+              <h2 className="text-base sm:text-xl font-semibold text-white/90 leading-snug" style={{ fontFamily: "var(--font-poppins)" }}>
+                {images[lightbox].title}
+              </h2>
             </div>
-            <p className="text-sm font-medium text-white">{images[lightbox].title}</p>
-            <p className="mt-0.5 text-xs text-white/40">{lightbox + 1} / {images.length}</p>
           </div>
         </div>
       )}
