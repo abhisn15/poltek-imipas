@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useState, useTransition } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import {
@@ -15,7 +15,10 @@ import {
   Award,
   GraduationCap,
   ChartNoAxesColumn,
+  Users,
+  type LucideIcon,
 } from "lucide-react"
+import { ambilMenuUntukAdmin } from "@/lib/aksi-admin"
 
 type DataAdmin = {
   idAdmin: number
@@ -24,15 +27,40 @@ type DataAdmin = {
   peran: "superadmin" | "admin"
 }
 
-const menuAdmin = [
-  { href: "/admin", label: "Dashboard", icon: LayoutDashboard, group: "Umum" },
-  { href: "/admin/berita", label: "Berita", icon: Newspaper, group: "Konten" },
-  { href: "/admin/blog", label: "Blog", icon: BookText, group: "Konten" },
-  { href: "/admin/jurnal", label: "Jurnal", icon: Library, group: "Konten" },
-  { href: "/admin/pejabat", label: "Pejabat", icon: Award, group: "Profil" },
-  { href: "/admin/dosen", label: "Dosen", icon: GraduationCap, group: "Profil" },
-  { href: "/admin/statistik-beranda", label: "Statistik Beranda", icon: ChartNoAxesColumn, group: "Pengaturan" },
-  { href: "/admin/role-user", label: "Role User", icon: ShieldUser, group: "Pengaturan" },
+type MenuDinamis = {
+  idMenu: number
+  kunci: string
+  label: string
+  href: string
+  ikon: string
+  grup: string
+  urutan: number
+  aktif: boolean
+}
+
+const IKON_MAP: Record<string, LucideIcon> = {
+  LayoutDashboard,
+  Newspaper,
+  ShieldUser,
+  BookText,
+  Library,
+  Award,
+  GraduationCap,
+  ChartNoAxesColumn,
+  Users,
+}
+
+// Fallback static menu — dipakai kalau tabel MenuAdmin belum ada / kosong
+const MENU_FALLBACK = [
+  { href: "/admin", label: "Dashboard", ikon: "LayoutDashboard", grup: "Umum" },
+  { href: "/admin/berita", label: "Berita", ikon: "Newspaper", grup: "Konten" },
+  { href: "/admin/blog", label: "Blog", ikon: "BookText", grup: "Konten" },
+  { href: "/admin/jurnal", label: "Jurnal", ikon: "Library", grup: "Konten" },
+  { href: "/admin/pejabat", label: "Pejabat", ikon: "Award", grup: "Profil" },
+  { href: "/admin/dosen", label: "Dosen", ikon: "GraduationCap", grup: "Profil" },
+  { href: "/admin/statistik-beranda", label: "Statistik Beranda", ikon: "ChartNoAxesColumn", grup: "Pengaturan" },
+  { href: "/admin/role-user", label: "Manajemen Role", ikon: "ShieldUser", grup: "Pengaturan" },
+  { href: "/admin/manajemen-user", label: "Manajemen User", ikon: "Users", grup: "Pengaturan" },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -41,11 +69,32 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [admin, setAdmin] = useState<DataAdmin | null>(null)
   const [memuatSesi, setMemuatSesi] = useState(true)
   const [menuMobileBuka, setMenuMobileBuka] = useState(false)
+  const [menuDinamis, setMenuDinamis] = useState<MenuDinamis[]>([])
+  const [, startTransition] = useTransition()
+
+  // Menu items — dynamic jika tersedia, fallback ke static
+  const menuItems = useMemo(() => {
+    if (menuDinamis.length > 0) {
+      return menuDinamis.map((m) => ({
+        href: m.href,
+        label: m.label,
+        ikon: m.ikon,
+        grup: m.grup,
+      }))
+    }
+    return MENU_FALLBACK
+  }, [menuDinamis])
+
+  const grupList = useMemo(() => {
+    const grupUrut = ["Umum", "Konten", "Profil", "Pengaturan"]
+    const grupSet = new Set(menuItems.map((m) => m.grup))
+    return grupUrut.filter((g) => grupSet.has(g))
+  }, [menuItems])
 
   const judulHalaman = useMemo(() => {
-    const item = menuAdmin.find((menu) => pathname === menu.href || pathname.startsWith(menu.href + "/"))
+    const item = menuItems.find((menu) => pathname === menu.href || (menu.href !== "/admin" && pathname.startsWith(menu.href + "/")))
     return item?.label ?? "Dashboard"
-  }, [pathname])
+  }, [pathname, menuItems])
 
   useEffect(() => {
     let aktif = true
@@ -81,6 +130,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
   }, [pathname, router])
 
+  // Ambil menu dinamis dari server action setelah sesi ada
+  useEffect(() => {
+    if (!admin) return
+    startTransition(async () => {
+      try {
+        const data = await ambilMenuUntukAdmin()
+        setMenuDinamis(data as MenuDinamis[])
+      } catch {
+        // Fallback ke static menu jika gagal (misal tabel belum ada)
+        setMenuDinamis([])
+      }
+    })
+  }, [admin])
+
   const prosesLogout = async () => {
     try {
       await fetch("/api/admin/keluar", { method: "POST" })
@@ -103,6 +166,35 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   if (!admin) {
     return null
   }
+
+  const renderNav = (onLinkClick?: () => void) => (
+    <nav>
+      {grupList.map((group) => {
+        const items = menuItems.filter((m) => m.grup === group)
+        if (items.length === 0) return null
+        return (
+          <div key={group} className="mb-3">
+            <div className="mb-1 px-2 text-[10px] font-bold uppercase tracking-wider text-white/30">{group}</div>
+            {items.map((item) => {
+              const Icon = IKON_MAP[item.ikon] ?? LayoutDashboard
+              const aktif = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href + "/"))
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`admin-menu-link ${aktif ? "active" : ""}`}
+                  onClick={onLinkClick}
+                >
+                  <Icon className="h-4 w-4" />
+                  {item.label}
+                </Link>
+              )
+            })}
+          </div>
+        )
+      })}
+    </nav>
+  )
 
   return (
     <>
@@ -241,30 +333,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 POLTEKIMIPAS
               </div>
               <div className="mt-1 text-xs text-white/65">
-                Panel Superadmin
+                Panel {admin.peran === "superadmin" ? "Superadmin" : "Admin"}
               </div>
             </Link>
 
-            <nav>
-              {["Umum", "Konten", "Profil", "Pengaturan"].map((group) => {
-                const items = menuAdmin.filter((m) => m.group === group)
-                return (
-                  <div key={group} className="mb-3">
-                    <div className="mb-1 px-2 text-[10px] font-bold uppercase tracking-wider text-white/30">{group}</div>
-                    {items.map((item) => {
-                      const Icon = item.icon
-                      const aktif = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href + "/"))
-                      return (
-                        <Link key={item.href} href={item.href} className={`admin-menu-link ${aktif ? "active" : ""}`}>
-                          <Icon className="h-4 w-4" />
-                          {item.label}
-                        </Link>
-                      )
-                    })}
-                  </div>
-                )
-              })}
-            </nav>
+            {renderNav()}
 
             <button
               type="button"
@@ -307,26 +380,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="admin-mobile-panel" onClick={() => setMenuMobileBuka(false)}>
             <div className="admin-mobile-card" onClick={(event) => event.stopPropagation()}>
               <div className="mb-3 text-xs uppercase tracking-widest text-[#e8c97a]">Menu Admin</div>
-              <nav>
-                {["Umum", "Konten", "Profil", "Pengaturan"].map((group) => {
-                  const items = menuAdmin.filter((m) => m.group === group)
-                  return (
-                    <div key={group} className="mb-3">
-                      <div className="mb-1 px-2 text-[10px] font-bold uppercase tracking-wider text-white/30">{group}</div>
-                      {items.map((item) => {
-                        const Icon = item.icon
-                        const aktif = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href + "/"))
-                        return (
-                          <Link key={item.href} href={item.href} className={`admin-menu-link ${aktif ? "active" : ""}`} onClick={() => setMenuMobileBuka(false)}>
-                            <Icon className="h-4 w-4" />
-                            {item.label}
-                          </Link>
-                        )
-                      })}
-                    </div>
-                  )
-                })}
-              </nav>
+              {renderNav(() => setMenuMobileBuka(false))}
               <button
                 type="button"
                 onClick={prosesLogout}
