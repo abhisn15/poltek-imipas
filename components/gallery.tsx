@@ -1,8 +1,10 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
+import { createPortal } from "react-dom"
 import Link from "next/link"
 import { X, ZoomIn, Images, ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 
 type GalleryItem = {
   src: string
@@ -83,8 +85,10 @@ export default function Gallery() {
   const [lightbox, setLightbox] = useState<number | null>(null)
   const [filter, setFilter] = useState("Semua")
   const [isLoading, setIsLoading] = useState(true)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     // Simulasi loading data dari server
     const timer = setTimeout(() => {
       setIsLoading(false)
@@ -229,72 +233,92 @@ export default function Gallery() {
       </div>
 
       {/* Lightbox */}
-      {lightbox !== null && (
-        <div
-          className="fixed inset-0 z-[9999] flex flex-col bg-black/80 backdrop-blur-sm transition-all"
-          onClick={tutupLightbox}
-        >
-          {/* Top Bar */}
-          <div className="flex shrink-0 items-center justify-between p-4 sm:p-6 pb-2 pt-[max(1rem,env(safe-area-inset-top))]">
-            <div className="text-white/50 text-xs sm:text-sm font-bold tracking-widest uppercase">
-              {lightbox + 1} / {images.length}
-            </div>
-            <button
+      {mounted && createPortal(
+        <AnimatePresence>
+          {lightbox !== null && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="fixed inset-0 z-[99999] flex flex-col bg-black/90 backdrop-blur-md"
               onClick={tutupLightbox}
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-md transition-all hover:bg-white/25 hover:scale-110"
-              aria-label="Tutup lightbox"
             >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
+              {/* Top Bar */}
+              <div className="flex shrink-0 items-center justify-between p-4 sm:p-6 pb-2 pt-[max(1rem,env(safe-area-inset-top))]">
+                <div className="text-white/50 text-xs sm:text-sm font-bold tracking-widest uppercase">
+                  {lightbox + 1} / {images.length}
+                </div>
+                <button
+                  onClick={tutupLightbox}
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-md transition-all hover:bg-white/25 hover:scale-110"
+                  aria-label="Tutup lightbox"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
 
-          {/* Main Image Area */}
-          <div className="relative flex min-h-0 flex-1 items-center justify-center px-2 sm:px-16">
-            {/* Tombol Prev */}
-            {lightbox > 0 && (
-              <button
-                className="absolute left-2 sm:left-6 z-50 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-md transition-all hover:bg-black/80 hover:scale-110 border border-white/10"
-                onClick={prevFoto}
-                aria-label="Foto sebelumnya"
+              {/* Main Image Area */}
+              <div className="relative flex min-h-0 flex-1 items-center justify-center px-2 sm:px-16 overflow-hidden">
+                {/* Tombol Prev */}
+                {lightbox > 0 && (
+                  <button
+                    className="absolute left-2 sm:left-6 z-50 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-md transition-all hover:bg-black/80 hover:scale-110 border border-white/10"
+                    onClick={prevFoto}
+                    aria-label="Foto sebelumnya"
+                  >
+                    <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
+                  </button>
+                )}
+
+                <AnimatePresence mode="wait">
+                  <motion.img
+                    key={lightbox}
+                    src={images[lightbox].src}
+                    alt={images[lightbox].title}
+                    initial={{ opacity: 0, scale: 0.95, filter: "blur(4px)" }}
+                    animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, scale: 1.05, filter: "blur(4px)" }}
+                    transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                    className="max-h-full max-w-full rounded-lg object-contain shadow-2xl ring-1 ring-white/5"
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </AnimatePresence>
+
+                {/* Tombol Next */}
+                {lightbox < images.length - 1 && (
+                  <button
+                    className="absolute right-2 sm:right-6 z-50 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-md transition-all hover:bg-black/80 hover:scale-110 border border-white/10"
+                    onClick={nextFoto}
+                    aria-label="Foto berikutnya"
+                  >
+                    <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
+                  </button>
+                )}
+              </div>
+
+              {/* Bottom Caption */}
+              <motion.div 
+                key={`caption-${lightbox}`}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.1 }}
+                className="shrink-0 p-4 sm:p-6 pt-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] text-center"
+                onClick={(e) => e.stopPropagation()}
               >
-                <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
-              </button>
-            )}
-
-            <img
-              src={images[lightbox].src}
-              alt={images[lightbox].title}
-              className="max-h-full max-w-full rounded-lg object-contain shadow-2xl ring-1 ring-white/5"
-              onClick={(e) => e.stopPropagation()}
-            />
-
-            {/* Tombol Next */}
-            {lightbox < images.length - 1 && (
-              <button
-                className="absolute right-2 sm:right-6 z-50 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-md transition-all hover:bg-black/80 hover:scale-110 border border-white/10"
-                onClick={nextFoto}
-                aria-label="Foto berikutnya"
-              >
-                <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
-              </button>
-            )}
-          </div>
-
-          {/* Bottom Caption */}
-          <div 
-            className="shrink-0 p-4 sm:p-6 pt-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] text-center"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="mx-auto max-w-3xl">
-              <span className={`mb-3 inline-block rounded-full px-3 py-1 text-[10px] sm:text-[11px] font-bold tracking-wider uppercase ${warnaBadge[images[lightbox].kategori] ?? "bg-white/15 text-white/70"}`}>
-                {images[lightbox].kategori}
-              </span>
-              <h2 className="text-base sm:text-xl font-semibold text-white/90 leading-snug" style={{ fontFamily: "var(--font-poppins)" }}>
-                {images[lightbox].title}
-              </h2>
-            </div>
-          </div>
-        </div>
+                <div className="mx-auto max-w-3xl">
+                  <span className={`mb-3 inline-block rounded-full px-3 py-1 text-[10px] sm:text-[11px] font-bold tracking-wider uppercase ${warnaBadge[images[lightbox].kategori] ?? "bg-white/15 text-white/70"}`}>
+                    {images[lightbox].kategori}
+                  </span>
+                  <h2 className="text-base sm:text-xl font-semibold text-white/90 leading-snug" style={{ fontFamily: "var(--font-poppins)" }}>
+                    {images[lightbox].title}
+                  </h2>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
       )}
     </section>
   )
